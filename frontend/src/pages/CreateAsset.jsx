@@ -11,9 +11,7 @@ function CreateAsset() {
         amountField: "",
     });
 
-
     const selectRef = useRef();
-
     const handleChange = (e) => {
         const { id, value } = e.target;
         
@@ -34,17 +32,35 @@ function CreateAsset() {
             item_name: data.itemNameField,
             brand: data.brandField,
             amount_purchased: data.amountField,
+            purchased_date: data.purchaseDateField,
             amount: data.amountField
         });
     }
 
     if (mutation.isError) {
-        return <p>An error is occurred: {mutation.error.message}</p>
+        return <div>
+            <p>
+                An error is occurred: {mutation.error.message}.
+            </p>;
+            <p>
+                Check the front-end network to see the error response.
+            </p>
+        </div>
     }
 
-    if (mutation.isSuccess) {
-        alert("Data has been successfully added!. ")
-    }
+    useEffect(() => {
+        if (mutation.isSuccess) {
+            alert("Asset created successfully!");
+            
+            mutation.reset()
+            setData({
+                itemNameField: "",
+                brandField: "",
+                purchaseDateField: "",
+                amountField: "",
+            });
+        }
+    }, [mutation.isSuccess]);
 
     return (
         <section className="asset_ctn">

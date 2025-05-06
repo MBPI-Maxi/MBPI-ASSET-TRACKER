@@ -1,13 +1,17 @@
+/**
+ * MATCH YOUR VALUE ATTRIBUTE TO THE DEPARTMENT DATABASE VALUE.
+ */
+
 function DepartmentDropBox({...props}) {
     return (
         <select name="dpt-field" {...props} required>
             <option value="selec-dpt">Select a Department</option> 
             <option value="IT">IT</option>
-            <option value="production-department">Production Department</option>
-            <option value="utility-maintenance">Utility Maintenance</option>
-            <option value="lab-department">Lab Department</option>
-            <option value="warehouse-department">Warehouse Department</option>
-            <option value="production-maintenance">Production Maintenance</option>
+            <option value="PRODUCTION DEPARTMENT">Production Department</option>
+            <option value="UTILITY MAINTENANCE">Utility Maintenance</option>
+            <option value="LAB DEPARTMENT">Lab Department</option>
+            <option value="WAREHOUSE DEPARTMENT">Warehouse Department</option>
+            <option value="PRODUCTION MAINTENANCE">Production Maintenance</option>
         </select>
     )
 }

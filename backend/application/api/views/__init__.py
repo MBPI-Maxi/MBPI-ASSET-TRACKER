@@ -1,1 +1,1 @@
-from application.api.views.core_view.asset_view import AssetViewAv
+from application.api.views.core_view.asset_view import AssetViewAv, AssetViewListAV

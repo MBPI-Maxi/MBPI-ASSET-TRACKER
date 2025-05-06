@@ -2,10 +2,11 @@ import { useState } from 'react';
 
 const sampleItems = [
   { id: 1, name: 'Laptop', department: 'IT' },
-  { id: 2, name: 'Printer', department: 'Admin' },
-  { id: 3, name: 'Whiteboard', department: 'HR' },
-  { id: 4, name: 'Router', department: 'IT' },
-  { id: 5, name: 'Desk Chair', department: 'Admin' },
+  { id: 2, name: 'Printer', department: 'PRODUCTION DEPARTMENT' },
+  { id: 3, name: 'Whiteboard', department: 'UTILITY MAINTENANCE' },
+  { id: 4, name: 'Router', department: 'LAB DEPARTMENT' },
+  { id: 5, name: 'Desk Chair', department: 'WAREHOUSE DEPARTMENT' },
+  { id: 6, name: 'Desktop', department: 'PRODUCTION MAINTENANCE' },
 ];
 
 export default function ItemFilter() {
@@ -18,39 +19,42 @@ export default function ItemFilter() {
   );
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow-lg rounded-2xl space-y-4">
-      <h2 className="text-2xl font-bold mb-2">Item Filter</h2>
+    <div className="">
+      <h2 className="">Item Filter</h2>
       
-      <div className="flex gap-4">
+      <div className="">
         <input
           type="text"
           placeholder="Search item name..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="flex-1 p-2 border border-gray-300 rounded-lg"
+          className=""
         />
 
         <select
           value={department}
           onChange={e => setDepartment(e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg"
+          className=""
         >
           <option value="">All Departments</option>
           <option value="IT">IT</option>
-          <option value="Admin">Admin</option>
-          <option value="HR">HR</option>
+          <option value="PRODUCTION DEPARTMENT">Production Department</option>
+          <option value="UTILITY MAINTENANCE">Utility Maintenance</option>
+          <option value="LAB DEPARTMENT">Lab Department</option>
+          <option value="WAREHOUSE DEPARTMENT">Warehouse Department</option>
+          <option value="PRODUCTION MAINTENANCE">Production Maintenance</option>
         </select>
       </div>
 
-      <ul className="divide-y divide-gray-200">
+      <ul className="">
         {filteredItems.map(item => (
           <li key={item.id} className="py-2">
-            <strong>{item.name}</strong> <span className="text-sm text-gray-500">({item.department})</span>
+            <strong>{item.name}</strong> <span className="">({item.department})</span>
           </li>
         ))}
 
         {filteredItems.length === 0 && (
-          <li className="py-2 text-gray-500">No items found.</li>
+          <li className="">No items found.</li>
         )}
       </ul>
     </div>

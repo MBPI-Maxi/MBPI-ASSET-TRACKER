@@ -16,9 +16,10 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             "item_name",
             "brand",
             "department",
-            "date_generated", # optional (auto-generated if not provided)
+            "qr_code_date_generated", # optional (auto-generated if not provided)
             "amount_purchased",
             "qr_code_data",
+            "purchased_date"
         ]
     
     def create(self, validated_data):
@@ -66,4 +67,20 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             })
         else:
             return department_obj
+        
+class AssetViewListModelSerializer(serializers.ModelSerializer):
+    # this will include the relationship columns
+    department = serializers.CharField(source='department_pii.department')
+    item_name = serializers.CharField(source='item_name_pii.item_name')
+
+    class Meta:
+        model = Asset
+        fields = [
+            'qr_code_date_generated',
+            'amount_purchased',
+            'qr_code_data',
+            'purchased_date',
+            'department', # add it here
+            'item_name', # add it here
+        ]
         
