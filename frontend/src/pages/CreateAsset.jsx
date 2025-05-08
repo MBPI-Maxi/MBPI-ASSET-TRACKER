@@ -15,7 +15,6 @@ function CreateAsset() {
     const selectRef = useRef();
     const handleChange = (e) => {
         const { id, value } = e.target;
-        
         setData(prevState => {
             return {
                 ...prevState,
@@ -26,7 +25,6 @@ function CreateAsset() {
 
     const handleCheckBox = (e) => {
         const isActive = e.target.checked; // boolean
-        console.log(isActive)
 
         setData(prevState => {
             return { ...prevState, isActive: isActive }
@@ -35,28 +33,28 @@ function CreateAsset() {
 
     const mutation = createAssetCall()
     
-    let payload;
+   
     const handleSubmit = () => {
         const department = selectRef.current.value;
-        
-        // match this to the postman api structure
-        payload = {
-            department: department,
-            item_name: data.itemNameField,
-            brand: data.brandField,
-            amount_purchased: data.amountField,
-            amount: data.amountField,
-            is_active: data.isActive
+    
+        // create your own payload based on the structure on the backend api required fields
+        const payload = {
+            "department": department,
+            "item_name": data.itemNameField,
+            "amount_purchased": data.amountField,
+            "is_active": data.isActive,
+            "brand": data.brandField,
+            "purchased_date": data.purchaseDateField
         }
 
-        if (data.purchaseDateField) {
-            payload.purchase_date = data.purchaseDateField;
+        if (!data.purchaseDateField) {
+            delete payload.purchased_date;
         }
 
         mutation.mutate(payload, {
             onError: (err) => {
                 const errorDetails = err.response.data;
-
+                console.log(payload);
                 alert(JSON.stringify(errorDetails));
             }
         });
@@ -64,7 +62,7 @@ function CreateAsset() {
 
     useEffect(() => {
         if (mutation.isSuccess) {
-            alert(`Asset created successfully!\n ${JSON.stringify(payload)}`);
+            alert(`Asset created successfully!\n `);
             
             // reset the fields and the data state
             mutation.reset()
@@ -73,7 +71,7 @@ function CreateAsset() {
                 brandField: "",
                 purchaseDateField: "",
                 amountField: "",
-                isActive: null
+                isActive: false
             });
         }
     }, [mutation.isSuccess]);

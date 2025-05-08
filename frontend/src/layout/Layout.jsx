@@ -12,7 +12,6 @@ function Layout() {
       <section className="container">
         <Outlet />
       </section>
-      
     </>
   );
 }

@@ -10,10 +10,19 @@ class Employee(AbstractUser):
     #     first_name="John",
     #     last_name="Doe",
     #     email="johndoe@example.com",
-    #     department=it_department  # Assign the department here
+    #     department=it_department  # Assign the department here (example: it_department = Department.objects.get(name="IT"))
     # )
     
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="department_rel")
+
+    # >>> from application.models import Employee, Department
+    # >>> department_obj = Department.objects.get(department='IT')
+    # >>> department_obj
+    # <Department: IT>
+    # >>> employee = Employee(username="JohnDoe", department=department_obj)
+    # >>> employee.save()
+    # >>> department_obj.department_rel.all()
+    # <QuerySet [<Employee: JohnDoe>]>
 
     def __str__(self):
        return self.username

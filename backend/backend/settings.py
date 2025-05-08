@@ -38,6 +38,10 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
+# MEDIA FILES HERE
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Application definition
 
@@ -83,6 +87,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
+# NOTE: defined this early
+AUTH_USER_MODEL = 'application.Employee' # make this into default user model 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -97,6 +103,7 @@ DATABASES = {
         'PORT': env("DB_PORT")
     }
 }
+
 
 
 # Password validation
@@ -145,3 +152,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
 ]
+

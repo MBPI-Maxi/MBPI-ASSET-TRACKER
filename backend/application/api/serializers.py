@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from application.models import Asset, Item, Department
-from datetime import date
-from dev.logger import log_message
-import re
-from typing import Type, List
+# from datetime import date
+# from dev.logger import log_message
+# import re
+from typing import Type
 
 class AssetViewModelSerializer(serializers.ModelSerializer):
     # additional fields for the Asset table 
@@ -21,7 +21,7 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             "is_active",
             "qr_code_date_generated", # optional (auto-generated if not provided)
             "amount_purchased",
-            "qr_code_data",
+            "qr_code_image",
             "purchased_date",
         ]
     
@@ -43,24 +43,31 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         # return Asset.objects.create(**validated_data)
         asset = Asset.objects.create(**validated_data)
         
+        # Generate QR code image now that asset_id exists
+        asset.generate_qr_code_image()
+        asset.save(update_fields=["qr_code_image", "qr_code_date_generated"]) 
+        
         # reversed call via related_name
         related_items = item_object.rel_items.all()
         
         return {
-            "date_generated": asset.qr_code_date_generated,
+            "asset_id": asset.asset_id,
+            # "date_generated": asset.qr_code_date_generated,
             "amount_purchased": asset.amount_purchased,
+            "purchased_date": asset.purchased_date,
             "item_name": item_name,
-            "qr_code_data": asset.qr_code_data,
+            "qr_code_image": asset.qr_code_image.url if asset.qr_code_image else None,
             "department": department_obj.department,
             "status": self.set_status(asset),
             "related_items": [
                 {
                     "asset_id": a.asset_id,
                     "amount_purchased": a.amount_purchased,
-                    "qr_code_data": a.qr_code_data,
-                    "date_generated": a.qr_code_date_generated,
+                    "purchased_date": a.purchased_date,
+                    # "qr_code_image": a.qr_code_image,
+                    # "date_generated": a.qr_code_date_generated,
                     "department": a.department_pii.department,
-                    "status": a.is_active,
+                    "status": self.set_status(a),
                     "item_name": a.item_name_pii.item_name
                 } for a in related_items
             ]
@@ -85,16 +92,23 @@ class AssetViewListModelSerializer(serializers.ModelSerializer):
     # this will include the relationship columns
     department = serializers.CharField(source='department_pii.department')
     item_name = serializers.CharField(source='item_name_pii.item_name')
-
+    brand = serializers.CharField(source="item_name_pii.brand")
+    
     class Meta:
         model = Asset
         fields = [
+            'asset_id',
             'qr_code_date_generated',
             'amount_purchased',
-            'qr_code_data',
+            'qr_code_image',
             'purchased_date',
             'department', # add it here
             'item_name', # add it here,
+            "brand",
             "is_active"
         ]
-        
+
+# serializer for department purchased summary
+class DateRangeQuerySerializer(serializers.Serializer):
+    start_date = serializers.DateField(required=True)
+    end_date = serializers.DateField(required=True)

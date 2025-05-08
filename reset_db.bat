@@ -1,3 +1,3 @@
-@echo off
-echo Resetting the database...
-psql -U postgres -d asset_tracker_db -h 192.168.1.13 -f "D:\Asset_Tracker\reset_db.sql"
+@REM @echo off
+@REM echo Resetting the database...
+@REM psql -U postgres -d asset_tracker_db -h 192.168.1.13 -f "D:\Asset_Tracker\reset_db.sql"

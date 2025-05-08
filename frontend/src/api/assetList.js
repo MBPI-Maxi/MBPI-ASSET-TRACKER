@@ -3,19 +3,19 @@ import axios from "axios";
 
 async function fetchAssets(data) {
     // data should be a javascript object
-    const response = await axios.get("http://127.0.0.1:8000/api/asset/list", {
+    const url = "http://127.0.0.1:8000/api/asset/list"
+    
+    const response = await axios.get(url, {
         params: data
     })
-
+    
     return response.data;
 }
 
-function useAssetQuery(filters) {
+export function useAssetQuery(filters) {
     return useQuery({
         queryKey: ["assets", filters],
         queryFn: () => fetchAssets(filters),
         enabled: false
     })
 }
-
-export default useAssetQuery;

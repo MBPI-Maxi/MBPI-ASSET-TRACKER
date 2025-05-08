@@ -1,6 +1,6 @@
 // AssetFilterContext.js
 import { useContext, createContext, useState, useRef, useCallback } from "react";
-import useAssetQuery from "../api/assetList";
+import { useAssetQuery } from "../api/assetList";
 
 const AssetFilterContext = createContext();
 
@@ -19,12 +19,11 @@ export function AssetFilterContextProvider({ children }) {
 
     const newPayload = {
       item_name: item,
-      department,
-      status
+      department: department,
+      is_active: status
     };
 
     if (department === "department") delete newPayload.department;
-    // if (status === "status") delete newPayload.status;
 
     setFilters(newPayload);
 
