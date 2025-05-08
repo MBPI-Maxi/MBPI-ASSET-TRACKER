@@ -3,12 +3,14 @@ from application.models import Asset, Item, Department
 from datetime import date
 from dev.logger import log_message
 import re
+from typing import Type, List
 
 class AssetViewModelSerializer(serializers.ModelSerializer):
     # additional fields for the Asset table 
     department = serializers.CharField(write_only=True)
     item_name = serializers.CharField(write_only=True)
     brand = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    is_active = serializers.BooleanField(write_only=True, required=False)
     
     class Meta:
         model = Asset
@@ -16,10 +18,11 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             "item_name",
             "brand",
             "department",
+            "is_active",
             "qr_code_date_generated", # optional (auto-generated if not provided)
             "amount_purchased",
             "qr_code_data",
-            "purchased_date"
+            "purchased_date",
         ]
     
     def create(self, validated_data):
@@ -40,23 +43,33 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         # return Asset.objects.create(**validated_data)
         asset = Asset.objects.create(**validated_data)
         
-        related_assets = item_object.rel_items.all()
+        # reversed call via related_name
+        related_items = item_object.rel_items.all()
         
         return {
-            "date_generated": asset.date_generated,
+            "date_generated": asset.qr_code_date_generated,
             "amount_purchased": asset.amount_purchased,
+            "item_name": item_name,
             "qr_code_data": asset.qr_code_data,
             "department": department_obj.department,
-            "related_assets": [
+            "status": self.set_status(asset),
+            "related_items": [
                 {
                     "asset_id": a.asset_id,
                     "amount_purchased": a.amount_purchased,
                     "qr_code_data": a.qr_code_data,
-                    "date_generated": a.date_generated
-                } for a in related_assets
+                    "date_generated": a.qr_code_date_generated,
+                    "department": a.department_pii.department,
+                    "status": a.is_active,
+                    "item_name": a.item_name_pii.item_name
+                } for a in related_items
             ]
         }
-
+    
+    def set_status(self, asset_model: Type[Asset]):
+        if asset_model.is_active:
+            return "Active"
+        return "Retired"
 
     def validate_department(self, department_value):
         try:
@@ -81,6 +94,7 @@ class AssetViewListModelSerializer(serializers.ModelSerializer):
             'qr_code_data',
             'purchased_date',
             'department', # add it here
-            'item_name', # add it here
+            'item_name', # add it here,
+            "is_active"
         ]
         

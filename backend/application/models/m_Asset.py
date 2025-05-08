@@ -10,6 +10,7 @@ class Asset(models.Model):
     purchased_date = models.DateField(null=True, blank=True)
     qr_code_date_generated = models.DateField(null=True, blank=True)
     qr_code_data = models.CharField(max_length=300, null=True, blank=True)
+    is_active = models.BooleanField(default=False, null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

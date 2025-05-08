@@ -8,13 +8,16 @@ function Navbar() {
           <NavLink to="/">Add Asset</NavLink>
         </li>
         <li>
+        <NavLink to="/update">Update Item Details</NavLink>   
+        </li>
+        <li>
           <NavLink to="/generate_qr">Generate QR Code</NavLink>
         </li>
         <li>
           <NavLink to="/test">Report Summary</NavLink>
         </li>
         <li>
-          <NavLink to="/find">Find Assets</NavLink>
+          <NavLink to="/find">Find Item</NavLink>
         </li>
       </ul>
     </nav>

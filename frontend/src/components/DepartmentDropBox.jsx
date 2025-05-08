@@ -5,7 +5,7 @@
 function DepartmentDropBox({...props}) {
     return (
         <select name="dpt-field" {...props} required>
-            <option value="selec-dpt">Select a Department</option> 
+            <option value="department">Department</option> 
             <option value="IT">IT</option>
             <option value="PRODUCTION DEPARTMENT">Production Department</option>
             <option value="UTILITY MAINTENANCE">Utility Maintenance</option>

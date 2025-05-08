@@ -13,7 +13,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <CreateAsset />
+        element: <CreateAsset />,
       },
       {
         path: "generate_qr",

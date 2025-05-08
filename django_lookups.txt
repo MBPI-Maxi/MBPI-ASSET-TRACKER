@@ -1,0 +1,57 @@
+String-related lookups
+exact – Exact match
+
+iexact – Case-insensitive exact match
+
+contains – Field contains a value
+
+icontains – Case-insensitive contains
+
+startswith – Starts with a value
+
+istartswith – Case-insensitive starts with
+
+endswith – Ends with a value
+
+iendswith – Case-insensitive ends with
+
+regex – Regular expression match
+
+iregex – Case-insensitive regex
+
+🔢 Numeric comparisons
+gt – Greater than
+
+gte – Greater than or equal
+
+lt – Less than
+
+lte – Less than or equal
+
+exact – Exact match (also works for numbers)
+
+in – Value is in a list
+
+🕒 Date/Time lookups
+year, month, day, week, week_day, quarter – Extract specific parts of a date
+
+date – Truncate to date
+
+time – Truncate to time
+
+hour, minute, second – Extract time parts
+
+range – Value is in a range (works for numbers and dates)
+
+isnull – Field is NULL or not
+
+🧠 Boolean/Null checks
+isnull – Checks for NULL (e.g., field__isnull=True)
+
+📦 Collection-related
+in – Checks if value is in a given list or queryset
+
+contains – For array fields or JSON fields (PostgreSQL)
+
+contained_by, overlap – For PostgreSQL array or range fields
+

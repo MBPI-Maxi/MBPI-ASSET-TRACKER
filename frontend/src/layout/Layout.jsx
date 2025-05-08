@@ -8,6 +8,7 @@ function Layout() {
         <img src="logo.png" alt="mbpi-logo" width="120px" height="70px" />
         <Navbar />
       </section>
+      
       <section className="container">
         <Outlet />
       </section>

@@ -1,0 +1,20 @@
+request properties of DRF
+
+| Property / Method              | Description                                                          |
+| ------------------------------ | -------------------------------------------------------------------- |
+| `request.query_params`         | For accessing **GET** parameters (`?key=value`). It's a `QueryDict`. |
+| `request.data`                 | For accessing **POST, PUT, PATCH** body data (parsed content).       |
+| `request.FILES`                | For accessing uploaded files (e.g., in multipart form data).         |
+| `request.method`               | Returns the HTTP method as a string (`'GET'`, `'POST'`, etc.).       |
+| `request.user`                 | The currently authenticated user (if any).                           |
+| `request.auth`                 | The authentication credentials used.                                 |
+| `request.content_type`         | The MIME type of the request body (e.g., `'application/json'`).      |
+| `request.META`                 | A dictionary of all HTTP headers and environment variables.          |
+| `request.headers`              | A case-insensitive, cleaner version of headers (DRF 3.11+).          |
+| `request.path`                 | Full path of the request (e.g., `/api/assets/`).                     |
+| `request.path_info`            | Same as `request.path` but unescaped (raw).                          |
+| `request.get_host()`           | Returns the originating host of the request.                         |
+| `request.build_absolute_uri()` | Returns the full URI including domain.                               |
+| `request.accepted_renderer`    | The renderer instance used to generate the response.                 |
+| `request.accepted_media_type`  | Media type selected (e.g., `application/json`).                      |
+| `request.version`              | API version if using versioning schemes.                             |

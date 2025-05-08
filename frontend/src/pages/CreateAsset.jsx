@@ -9,6 +9,7 @@ function CreateAsset() {
         brandField: "",
         purchaseDateField: "",
         amountField: "",
+        isActive: false
     });
 
     const selectRef = useRef();
@@ -23,41 +24,56 @@ function CreateAsset() {
         })
     };
 
+    const handleCheckBox = (e) => {
+        const isActive = e.target.checked; // boolean
+        console.log(isActive)
+
+        setData(prevState => {
+            return { ...prevState, isActive: isActive }
+        })
+    }
+
     const mutation = createAssetCall()
+    
+    let payload;
     const handleSubmit = () => {
         const department = selectRef.current.value;
         
-        mutation.mutate({
+        // match this to the postman api structure
+        payload = {
             department: department,
             item_name: data.itemNameField,
             brand: data.brandField,
             amount_purchased: data.amountField,
-            purchased_date: data.purchaseDateField,
-            amount: data.amountField
-        });
-    }
+            amount: data.amountField,
+            is_active: data.isActive
+        }
 
-    if (mutation.isError) {
-        return <div>
-            <p>
-                An error is occurred: {mutation.error.message}.
-            </p>;
-            <p>
-                Check the front-end network to see the error response.
-            </p>
-        </div>
+        if (data.purchaseDateField) {
+            payload.purchase_date = data.purchaseDateField;
+        }
+
+        mutation.mutate(payload, {
+            onError: (err) => {
+                const errorDetails = err.response.data;
+
+                alert(JSON.stringify(errorDetails));
+            }
+        });
     }
 
     useEffect(() => {
         if (mutation.isSuccess) {
-            alert("Asset created successfully!");
+            alert(`Asset created successfully!\n ${JSON.stringify(payload)}`);
             
+            // reset the fields and the data state
             mutation.reset()
             setData({
                 itemNameField: "",
                 brandField: "",
                 purchaseDateField: "",
                 amountField: "",
+                isActive: null
             });
         }
     }, [mutation.isSuccess]);
@@ -106,6 +122,10 @@ function CreateAsset() {
                     step="0.01" 
                     onChange={handleChange}
                 />
+            </div>
+            <div>
+                <label htmlFor="isActive">Active:</label>
+                <input type="checkbox" id="isActive" onChange={handleCheckBox} />
             </div>
             <button 
                 className="asset-submit-btn"
