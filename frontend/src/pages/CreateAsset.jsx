@@ -9,7 +9,9 @@ function CreateAsset() {
         brandField: "",
         purchaseDateField: "",
         amountField: "",
-        isActive: false
+        isActive: false,
+        location: "",
+        tagType: ""
     });
 
     const selectRef = useRef();
@@ -21,6 +23,8 @@ function CreateAsset() {
                 [id]: value
             }
         })
+
+        console.log(data.tagType);
     };
 
     const handleCheckBox = (e) => {
@@ -31,12 +35,19 @@ function CreateAsset() {
         })
     }
 
+    const handleRadioButton = (e) => {
+        const value = e.target.value;
+
+        setData(prevState => {
+            return { ...prevState, tagType: value };
+        })
+    }
+
     const mutation = createAssetCall()
-    
-   
+
     const handleSubmit = () => {
         const department = selectRef.current.value;
-    
+
         // create your own payload based on the structure on the backend api required fields
         const payload = {
             "department": department,
@@ -44,7 +55,8 @@ function CreateAsset() {
             "amount_purchased": data.amountField,
             "is_active": data.isActive,
             "brand": data.brandField,
-            "purchased_date": data.purchaseDateField
+            "purchased_date": data.purchaseDateField,
+            "location": data.location
         }
 
         if (!data.purchaseDateField) {
@@ -63,7 +75,7 @@ function CreateAsset() {
     useEffect(() => {
         if (mutation.isSuccess) {
             alert(`Asset created successfully!\n `);
-            
+
             // reset the fields and the data state
             mutation.reset()
             setData({
@@ -71,8 +83,13 @@ function CreateAsset() {
                 brandField: "",
                 purchaseDateField: "",
                 amountField: "",
-                isActive: false
+                isActive: false,
+                location: ""
             });
+
+            if (selectRef.current) {
+                selectRef.current.value = "department";
+            }
         }
     }, [mutation.isSuccess]);
 
@@ -82,50 +99,91 @@ function CreateAsset() {
                 <h1>Fill up assets:</h1>
             </div>
             <div>
-                <label htmlFor="departmentField">Select Department</label>
-                <DepartmentDropBox 
+                <label htmlFor="departmentField" className="asset-ctn-outer-lbel">Select Department</label>
+                <DepartmentDropBox
                     id="departmentField"
                     ref={selectRef}
+                    required
                 />
             </div>
             <div>
-                <label htmlFor="itemNameField">Item name:</label>
-                <input 
-                    type="text" 
+                <label htmlFor="itemNameField" className="asset-ctn-outer-lbel">Item name:</label>
+                <input
+                    type="text"
                     id="itemNameField"
-                    onChange={handleChange} 
+                    value={data.itemNameField}
+                    onChange={handleChange}
+                    required
                 />
             </div>
             <div>
-                <label htmlFor="brandField">Brand:</label>
-                <input 
-                    type="text" 
+                <label htmlFor="brandField" className="asset-ctn-outer-lbel">Brand:</label>
+                <input
+                    type="text"
                     id="brandField"
+                    value={data.brandField}
                     onChange={handleChange}
+                    required
                 />
             </div>
             <div>
-                <label htmlFor="purchaseDateField">Purchase Date:</label>
-                <input 
-                    type="date" 
+                <label htmlFor="purchaseDateField" className="asset-ctn-outer-lbel">Purchase Date:</label>
+                <input
+                    type="date"
                     id="purchaseDateField"
+                    value={data.purchaseDateField}
                     onChange={handleChange}
                 />
             </div>
             <div>
-                <label htmlFor="amountField">Amount Purchased (php):</label>
-                <input 
-                    type="number" 
-                    id="amountField" 
-                    step="0.01" 
+                <label htmlFor="amountField" className="asset-ctn-outer-lbel">Amount Purchased (php):</label>
+                <input
+                    type="number"
+                    id="amountField"
+                    step="0.01"
                     onChange={handleChange}
+                    value={data.amountField}
+                    required
                 />
             </div>
             <div>
-                <label htmlFor="isActive">Active:</label>
-                <input type="checkbox" id="isActive" onChange={handleCheckBox} />
+                <label htmlFor="location" className="asset-ctn-outer-lbel">Location</label>
+                <input
+                    type="text"
+                    id="location"
+                    value={data.location}
+                    onChange={handleChange}
+                    required
+                />
             </div>
-            <button 
+            <div>
+                <label htmlFor="isActive" className="asset-ctn-outer-lbel">Active:</label>
+                <input type="checkbox" id="isActive" value={data.isActive} onChange={handleCheckBox} />
+            </div>
+            <div>
+                <label className="asset-ctn-outer-lbel">Tag Type</label>
+                <div>
+                    <input
+                        type="radio"
+                        name="tagType"
+                        id="qr-radio-type"
+                        value="QR"
+                        onChange={handleRadioButton}
+                    />
+                    <label htmlFor="qr-radio-type">QR</label>
+                </div>
+                <div>
+                    <input
+                        type="radio"
+                        name="tagType"
+                        id="rfid-radio-type"
+                        value="RFID"
+                        onChange={handleRadioButton}
+                    />
+                    <label htmlFor="rfid-radio-type">RFID</label>
+                </div>
+            </div>
+            <button
                 className="asset-submit-btn"
                 onClick={handleSubmit}
             >

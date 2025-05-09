@@ -15,5 +15,12 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b %ERRORLEVEL%
 )
 
+cd .. && echo Running seed script...
+call seed.bat
+IF %ERRORLEVEL% NEQ 0 (
+    echo Error during seed script. Exiting...
+    exit /b %ERRORLEVEL%
+)
+
 echo Starting Django server...
 python manage.py runserver

@@ -8,7 +8,8 @@ export default function ItemFilter() {
     item, 
     setItem, 
     filters, 
-    setNewFilters, 
+    setNewFilters,
+    setDate,
     departmentRef, 
     statusRef,
     handleClick
@@ -20,6 +21,7 @@ export default function ItemFilter() {
       <div>
         <DepartmentDropBox ref={departmentRef} />
         <StatusDropDown ref={statusRef} />
+        <input type="date" onChange={(e) => setDate(e.target.value)} />
       </div>
 
       <div>

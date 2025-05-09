@@ -66,11 +66,11 @@ function AssetGeneration({ setOptionValue }) {
 
                         let itemUpper = item_name.toUpperCase();
                         let departmentUpper = department.toUpperCase();
-                        let brandUpper = brand.toUpperCase();
+                        let brandUpper = brand ? brand.toUpperCase() : "";
                         let assetIdUpper = `AST_${asset_id}`;
-
+                        
                         return <option key={index} value={assetIdUpper}>
-                            {`${itemUpper} | ${departmentUpper} | ${brandUpper} | ${assetIdUpper}`}
+                            {`${itemUpper} | ${departmentUpper} ${brandUpper && `| ${brandUpper}`} | ${assetIdUpper}`}
                         </option>
                     })
                 }

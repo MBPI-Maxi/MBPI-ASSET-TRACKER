@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from application.models import Department, Employee
+from application.models import Department, Employee, Location
 from enum import Enum
 
 class DepartmentConstant(Enum):
@@ -31,6 +31,13 @@ class EmployeeConstant(Enum):
         ("paul", "paul", "valdez", "PRODUCTION DEPARTMENT"),
         ("nina", "nina", "fernandez", "IT")
     ]
+    
+class LocationConstant(Enum):
+    LOCATION = [
+        "IT ROOM",
+        "WAREHOUSE 1",
+        "CONFERENCE ROOM"
+    ]
 
 def write_notice(instance, table_name):
     instance.stdout.write(instance.style.NOTICE(f"Seeding {table_name} Table..."))
@@ -46,6 +53,10 @@ class Command(BaseCommand):
         write_notice(self, "Employee")
         for username, first_name, last_name, department in EmployeeConstant.EMPLOYEES.value:
             self.seed_employee(username, first_name, last_name, department)
+            
+        write_notice(self, "Location")
+        for location in LocationConstant.LOCATION.value:
+            self.seed_location(location)
 
     def seed_department(self, dept_name):
         if not Department.objects.filter(department=dept_name).exists():
@@ -77,6 +88,17 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.WARNING(f"Employee username '{username}' already exists.")
             )
+    
+    def seed_location(self, location):
+        if not Location.objects.filter(name=location).exists():
+            Location.objects.create(name=location)
             
+            self.stdout.write(
+                self.style.SUCCESS(f"Seeded Location: {location}")
+            )
+        else:
+            self.stdout.write(
+                self.style.WARNING(f"Location: '{location}' already exists.")
+            )
     
     

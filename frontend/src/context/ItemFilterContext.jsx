@@ -5,7 +5,8 @@ import { useAssetQuery } from "../api/assetList";
 const AssetFilterContext = createContext();
 
 export function AssetFilterContextProvider({ children }) {
-  const [item, setItem] = useState(""); 
+  const [item, setItem] = useState("");
+  const [date, setDate] = useState("");
   const [filters, setFilters] = useState(null);
 
   const departmentRef = useRef();
@@ -20,7 +21,8 @@ export function AssetFilterContextProvider({ children }) {
     const newPayload = {
       item_name: item,
       department: department,
-      is_active: status
+      is_active: status,
+      purchased_date: date
     };
 
     if (department === "department") delete newPayload.department;
@@ -42,7 +44,9 @@ export function AssetFilterContextProvider({ children }) {
       departmentRef,
       statusRef,
       query,
-      handleClick
+      handleClick,
+      setDate,
+      date
     }}>
       {children}
     </AssetFilterContext.Provider>

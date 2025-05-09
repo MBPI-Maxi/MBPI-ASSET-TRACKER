@@ -13,16 +13,19 @@ if /I "%SEED_ASSETS%"=="Y" (
     echo Seeding assets...
 
     cd backend
-    python manage.py seed_dept
+    python manage.py seeder
 
     if %ERRORLEVEL% NEQ 0 (
         echo.
         echo [ERROR] Seeding failed. Exiting...
         exit /b %ERRORLEVEL%
     )
+
+    echo.
+    echo Done.
 ) else (
+    cd backend
     echo Skipping asset seeding.
 )
 
 echo.
-echo Done.
