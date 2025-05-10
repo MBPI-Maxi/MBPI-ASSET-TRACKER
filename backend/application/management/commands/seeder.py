@@ -14,22 +14,22 @@ class DepartmentConstant(Enum):
     
 class EmployeeConstant(Enum):
     EMPLOYEES = [
-        # (username, firstn, lastn, dept)
-        ("jarick", "jarick", "montojo", "IT"),
-        ("francis", "francis", "candelaria", "IT"),
-        ("joshua1", "joshua", "eribuagas", "PRODUCTION DEPARTMENT"),
-        ("joshua2", "joshua", "dupalco", "PRODUCTION DEPARTMENT"),
-        ("maria", "maria", "lopez", "UTILITY MAINTENANCE"),
-        ("john", "john", "cruz", "WAREHOUSE DEPARTMENT"),
-        ("lisa", "lisa", "reyes", "PRODUCTION MAINTENANCE"),
-        ("eric", "eric", "villanueva", "LAB DEPARTMENT"),
-        ("karen", "karen", "delosantos", "IT"),
-        ("steven", "steven", "torres", "WAREHOUSE DEPARTMENT"),
-        ("michelle", "michelle", "navarro", "UTILITY MAINTENANCE"),
-        ("ron", "ron", "gutierrez", "PRODUCTION MAINTENANCE"),
-        ("ella", "ella", "salazar", "LAB DEPARTMENT"),
-        ("paul", "paul", "valdez", "PRODUCTION DEPARTMENT"),
-        ("nina", "nina", "fernandez", "IT")
+        # (username, firstn, lastn, dept, password)
+        ("jarick", "jarick", "montojo", "IT", "testing"),
+        ("francis", "francis", "candelaria", "IT", "testing"),
+        ("joshua1", "joshua", "eribuagas", "PRODUCTION DEPARTMENT", "testing"),
+        ("joshua2", "joshua", "dupalco", "PRODUCTION DEPARTMENT", "testing"),
+        ("maria", "maria", "lopez", "UTILITY MAINTENANCE", "testing"),
+        ("john", "john", "cruz", "WAREHOUSE DEPARTMENT", "testing"),
+        ("lisa", "lisa", "reyes", "PRODUCTION MAINTENANCE", "testing"),
+        ("eric", "eric", "villanueva", "LAB DEPARTMENT", "testing"),
+        ("karen", "karen", "delosantos", "IT", "testing"),
+        ("steven", "steven", "torres", "WAREHOUSE DEPARTMENT", "testing"),
+        ("michelle", "michelle", "navarro", "UTILITY MAINTENANCE", "testing"),
+        ("ron", "ron", "gutierrez", "PRODUCTION MAINTENANCE", "testing"),
+        ("ella", "ella", "salazar", "LAB DEPARTMENT", "testing"),
+        ("paul", "paul", "valdez", "PRODUCTION DEPARTMENT", "testing"),
+        ("nina", "nina", "fernandez", "IT", "testing")
     ]
     
 class LocationConstant(Enum):
@@ -51,8 +51,8 @@ class Command(BaseCommand):
             self.seed_department(department)
         
         write_notice(self, "Employee")
-        for username, first_name, last_name, department in EmployeeConstant.EMPLOYEES.value:
-            self.seed_employee(username, first_name, last_name, department)
+        for (username, first_name, last_name, department, password) in EmployeeConstant.EMPLOYEES.value:
+            self.seed_employee(username, first_name, last_name, department, password)
             
         write_notice(self, "Location")
         for location in LocationConstant.LOCATION.value:
@@ -70,12 +70,19 @@ class Command(BaseCommand):
                 self.style.WARNING(f"Department '{dept_name}' already exists.")
             )
     
-    def seed_employee(self, username, first, last, dept):
+    def seed_employee(self, username, first, last, dept, password):
         if not Employee.objects.filter(username=username).filter(department__department=dept).exists():
             department_obj = Department.objects.get(department=dept)
             
             if department_obj:
-                Employee.objects.create(username=username, first_name=first, last_name=last, department=department_obj)
+                employee = Employee(
+                    username=username, 
+                    first_name=first, 
+                    last_name=last, 
+                    department=department_obj
+                )
+                employee.set_password(password)
+                employee.save()
             
                 self.stdout.write(
                     self.style.SUCCESS(f"Seeded Asset: {username}")

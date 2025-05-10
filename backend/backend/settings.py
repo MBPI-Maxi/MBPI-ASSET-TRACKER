@@ -38,6 +38,17 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
+#DataFlair #Memcached
+CACHES = {
+    # "default": {
+    #     "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+    #     "LOCATION": "127.0.0.1:11211",
+    # }
+    "default": {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 # MEDIA FILES HERE
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -55,6 +66,7 @@ INSTALLED_APPS = [
     "application",
     "rest_framework",
     "corsheaders",
+    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
@@ -69,6 +81,17 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "backend.urls"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ]
+}
+
+SIMPLE_JWT = {
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+}
 
 TEMPLATES = [
     {

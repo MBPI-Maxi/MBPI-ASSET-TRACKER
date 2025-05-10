@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from application.models import Asset, Item, Department, Location
 from django.forms.models import model_to_dict
 # from datetime import date
@@ -30,6 +31,8 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         - validate_location - checks if the location is existing on the Location table before inserting to the DB
     """
     
+    # remove the write_only on refactor this will make it more cleaner to read
+    # write_only parameter tells that the field will not return on the response.
     department = serializers.CharField(write_only=True, required=True, allow_blank=False)
     item_name = serializers.CharField(write_only=True, required=True, allow_blank=False)
     location = serializers.CharField(write_only=True, required=True, allow_blank=False)
@@ -198,3 +201,39 @@ class DateRangeQuerySerializer(serializers.Serializer):
     
     def __str__(self):
         return f"<StartDate: {self.start_date} EndDate: {self.end_date} >"
+    
+
+class RegistrationViewSerializer(serializers.Serializer):
+    # user model in this class only
+    User = get_user_model()
+    
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(write_only=True, required=True) # does not return on the response
+    email = serializers.EmailField(required=True)
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    department = serializers.CharField(required=True)
+    
+    def validate_username(self, value):
+        if self.User.objects.filter(username=value).exists():
+            raise serializers.ValidationError(f"Username: '{value}' already exists.")
+        return value
+    
+    def validate_department(self, value):
+        try:
+            department_obj = Department.objects.get(department=value)
+        except Department.DoesNotExist:
+            raise serializers.ValidationError(f"Department '{value}' does not exists.")
+        else:
+            return department_obj
+    
+    def create(self, validated_data):
+        # fetch the validated data by using pop method on ('department')
+        department_obj = validated_data.pop("department")
+
+        user_obj = self.User.objects.create_user(
+            **validated_data,
+            department=department_obj
+        )
+            
+        return user_obj        
