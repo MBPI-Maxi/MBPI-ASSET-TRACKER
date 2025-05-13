@@ -76,6 +76,10 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         validated_data["department_pii"] = department_obj
         validated_data["location"] = location_obj
         
+        # fill up the generatd_by and updated_by using context from the AssetViewAv
+        validated_data["generated_by"] = self.context["request"].user
+        validated_data["updated_by"] = self.context["request"].user
+        
         # return Asset.objects.create(**validated_data)
         asset = Asset.objects.create(**validated_data)
         

@@ -153,7 +153,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+# TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Manila"
+USE_TZ = True  # Keep this True if you're storing in UTC but want to display in local time
 
 USE_I18N = True
 
