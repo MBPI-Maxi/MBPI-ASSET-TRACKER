@@ -52,7 +52,9 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             "qr_code_image",
             "purchased_date",
             "location",
-            "created_at"
+            "created_at",
+            "generated_by",
+            "updated_by",
         ]
     
     def create(self, validated_data):
@@ -84,6 +86,8 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         # reversed call via related_name
         related_items = item_object.rel_items.all()
         
+        current_user = self.context["request"].user
+        
         return {
             "asset_id": asset.asset_id,
             "amount_purchased": asset.amount_purchased,
@@ -91,8 +95,12 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             "item_name": item_name,
             "qr_code_image": asset.qr_code_image.url if asset.qr_code_image else None,
             "department": department_obj.department,
-            "status": self.set_status(asset),
+            # "status": self.set_status(asset),
+            "status": asset.is_active,
+            "is_found": asset.is_found,
             "tag_type": asset.tag_type,
+            "generated_by": f"{current_user.first_name} {current_user.last_name}", # this is just a string manipulation
+            "updated_by": f"{current_user.first_name} {current_user.last_name}", # this is just a string manipulation
             "created_at": asset.created_at,
             "related_items": [
                 {
@@ -101,7 +109,11 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
                     "purchased_date": a.purchased_date,
                     # "qr_code_image": a.qr_code_image,
                     "department": a.department_pii.department,
-                    "status": self.set_status(a),
+                    # "status": self.set_status(a),
+                    "status": a.is_active,
+                    "is_found": a.is_found,
+                    "generated_by": f"{a.first_name} {a.last_name}",
+                    "updated_by": f"{a.first_name} {a.last_name}",
                     "item_name": a.item_name_pii.item_name,
                     "tag_type": a.tag_type,
                     "created_at": a.created_at,
@@ -109,6 +121,40 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             ]
         }
     
+    def update(self, instance, validated_data):
+        # prevent the update the item name on during the requests.
+        if "item_name" in validated_data:
+            validated_data.pop("item_name")
+        
+        # links to the `validate_department` method
+        department_obj = validated_data.pop("department")
+        location_obj = validated_data.pop("location")
+        
+        # if brand and item name is not matched in the database, create a new instance so that other asset with the same item_pii id will not be affected.
+        brand = validated_data.get("brand", instance.item_name_pii.brand)
+        if brand != instance.item_name_pii.brand:
+            new_item, _ = Item.objects.get_or_create(item_name=instance.item_name_pii.item_name, brand=brand)
+            instance.item_name_pii = new_item
+        
+        instance.department_pii = department_obj
+        instance.location = location_obj
+        
+        instance.amount_purchased = validated_data.get("amount_purchased", instance.amount_purchased)
+        instance.purchased_date = validated_data.get("purchased_date", instance.purchased_date)
+        instance.is_active = validated_data.get("is_active", instance.is_active)
+        instance.tag_type = validated_data.get("tag_type", instance.tag_type)
+        
+        # updated by.
+        instance.updated_by = self.context["request"].user
+                
+        # links to the `validate_is_found` method
+        instance.is_found = validated_data.pop("is_found", instance.is_found)
+        
+        # generate a new qr code based on the details
+        instance.generate_qr_code_image()
+        instance.save() # save the instance
+        return instance
+        
     def set_status(self, asset_model: Type[Asset]):
         if asset_model.is_active:
             return "Active"
@@ -133,9 +179,6 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             })
         else:
             return location_obj
-        
-    def validate_is_found(self, value):
-        log_message(value)
                 
 class AssetViewListModelSerializer(serializers.ModelSerializer):
     """
@@ -174,6 +217,8 @@ class AssetViewListModelSerializer(serializers.ModelSerializer):
             "is_active",
             "tag_type",
             "created_at",
+            "generated_by",
+            "updated_by",
         ]
         
     def get_assets_str(self, obj):
@@ -182,7 +227,7 @@ class AssetViewListModelSerializer(serializers.ModelSerializer):
     def get_location(self, obj):
         # the location is existing on the asset table as a column
         return obj.location.name if obj.location else None
-    
+
 # serializer for department purchased summary
 class DateRangeQuerySerializer(serializers.Serializer):
     """
@@ -236,4 +281,4 @@ class RegistrationViewSerializer(serializers.Serializer):
             department=department_obj
         )
             
-        return user_obj        
+        return user_obj

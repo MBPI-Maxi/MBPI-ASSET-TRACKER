@@ -1,16 +1,17 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from application.api.serializers import AssetViewModelSerializer, AssetViewListModelSerializer
 from application.models import Asset
-from rest_framework.permissions import IsAuthenticated
 from dev.logger import log_message
 
-# from dev.logger import log_message
 
-class AssetViewAv(APIView):        
+class AssetViewAv(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
-        serializer = AssetViewModelSerializer(data=request.data)
+        serializer = AssetViewModelSerializer(data=request.data, context={ "request": request })
         
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -20,6 +21,37 @@ class AssetViewAv(APIView):
         
         return Response(response_data, status=status.HTTP_201_CREATED)
 
+    def put(self, request, pk):
+        try:
+            asset = Asset.objects.get(asset_id=pk)
+        except Asset.DoesNotExist:
+            return Response({"Detail": "Asset not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # pass the request object on the serializer to put the current user who updated it and save to the db
+        serializer = AssetViewModelSerializer(
+            asset, 
+            data=request.data, 
+            context={ "request": request }
+        )
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get(self, request, pk):
+        try:
+            asset = Asset.objects.get(asset_id=pk)
+            return Response({
+                "Asset ID": f"AST-{asset.asset_id}", 
+                "Item name": asset.item_name_pii.item_name
+            }, status=status.HTTP_200_OK)
+        except Asset.DoesNotExist:
+            return Response(
+                {"error": "Asset does not exist."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
 # add a caching mechanism here
 class AssetViewListAV(APIView):
     permission_classes = [IsAuthenticated]
