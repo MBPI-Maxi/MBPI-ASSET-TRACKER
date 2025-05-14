@@ -1,11 +1,33 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from application.models import Asset, Item, Department, Location
+from application.models import Asset, Item, Department, Location, Employee
 from django.forms.models import model_to_dict
 # from datetime import date
 from dev.logger import log_message
 # import re
 from typing import Type
+
+# use this serializer so that it is easy to show columns
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = [
+            "brand",
+            "item_name"
+        ]
+        
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "is_superuser",
+            "is_staff",
+            "is_active",
+            "date_joined"
+        ]
 
 class AssetViewModelSerializer(serializers.ModelSerializer):
     """
@@ -39,9 +61,16 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
     brand = serializers.CharField(write_only=True, required=False, allow_blank=True)
     is_active = serializers.BooleanField(write_only=True, required=True)
     
+    # serializer to show other data
+    # NOTE: the variable name should match the column within the database.
+    item_name_pii = ItemSerializer(read_only=True)
+    generated_by = EmployeeSerializer(read_only=True)
+    updated_by = EmployeeSerializer(read_only=True)
+    
     class Meta:
         model = Asset
         fields = [
+            "asset_id",
             "item_name",
             "brand",
             "department",
@@ -55,6 +84,7 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             "created_at",
             "generated_by",
             "updated_by",
+            "item_name_pii",
         ]
     
     def create(self, validated_data):
@@ -69,7 +99,6 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             item_name=item_name, 
             brand=brand
         )
-        # log_message(validated_data)
         
         # NOTE: this is assigning value to designated column during creation. 
         validated_data["item_name_pii"] = item_object
@@ -77,8 +106,9 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         validated_data["location"] = location_obj
         
         # fill up the generatd_by and updated_by using context from the AssetViewAv
-        validated_data["generated_by"] = self.context["request"].user
-        validated_data["updated_by"] = self.context["request"].user
+        current_user = self.context["request"].user
+        validated_data["generated_by"] = current_user
+        validated_data["updated_by"] = current_user
         
         # return Asset.objects.create(**validated_data)
         asset = Asset.objects.create(**validated_data)
@@ -88,42 +118,9 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         asset.save(update_fields=["qr_code_image"]) 
         
         # reversed call via related_name
-        related_items = item_object.rel_items.all()
+        # related_items = item_object.rel_items.all()
         
-        current_user = self.context["request"].user
-        
-        return {
-            "asset_id": asset.asset_id,
-            "amount_purchased": asset.amount_purchased,
-            "purchased_date": asset.purchased_date,
-            "item_name": item_name,
-            "qr_code_image": asset.qr_code_image.url if asset.qr_code_image else None,
-            "department": department_obj.department,
-            # "status": self.set_status(asset),
-            "status": asset.is_active,
-            "is_found": asset.is_found,
-            "tag_type": asset.tag_type,
-            "generated_by": f"{current_user.first_name} {current_user.last_name}", # this is just a string manipulation
-            "updated_by": f"{current_user.first_name} {current_user.last_name}", # this is just a string manipulation
-            "created_at": asset.created_at,
-            "related_items": [
-                {
-                    "asset_id": a.asset_id,
-                    "amount_purchased": a.amount_purchased,
-                    "purchased_date": a.purchased_date,
-                    # "qr_code_image": a.qr_code_image,
-                    "department": a.department_pii.department,
-                    # "status": self.set_status(a),
-                    "status": a.is_active,
-                    "is_found": a.is_found,
-                    "generated_by": f"{a.first_name} {a.last_name}",
-                    "updated_by": f"{a.first_name} {a.last_name}",
-                    "item_name": a.item_name_pii.item_name,
-                    "tag_type": a.tag_type,
-                    "created_at": a.created_at,
-                } for a in related_items
-            ]
-        }
+        return asset
     
     def update(self, instance, validated_data):
         # prevent the update the item name on during the requests.
@@ -286,3 +283,6 @@ class RegistrationViewSerializer(serializers.Serializer):
         )
             
         return user_obj
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField(required=True)

@@ -13,13 +13,10 @@ class AssetViewAv(APIView):
     def post(self, request):
         serializer = AssetViewModelSerializer(data=request.data, context={ "request": request })
         
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
         
-        # data you make on the serializer
-        response_data = serializer.save()
-        
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def put(self, request, pk):
         try:
@@ -33,6 +30,7 @@ class AssetViewAv(APIView):
             data=request.data, 
             context={ "request": request }
         )
+        
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -41,18 +39,19 @@ class AssetViewAv(APIView):
     
     def get(self, request, pk):
         try:
-            asset = Asset.objects.get(asset_id=pk)
-            return Response({
-                "Asset ID": f"AST-{asset.asset_id}", 
-                "Item name": asset.item_name_pii.item_name
-            }, status=status.HTTP_200_OK)
+            asset = Asset.objects.get(asset_id=pk)  
         except Asset.DoesNotExist:
             return Response(
                 {"error": "Asset does not exist."},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
-# add a caching mechanism here
+        else:
+            serializer = AssetViewModelSerializer(asset, data=request.data)
+            
+            if serializer.is_valid():
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
 class AssetViewListAV(APIView):
     permission_classes = [IsAuthenticated]
     

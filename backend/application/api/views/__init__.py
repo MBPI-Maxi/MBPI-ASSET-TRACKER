@@ -1,18 +1,25 @@
-from application.api.views.core_view.asset_view import (
+# core
+from application.api.views.core.asset_view import (
     AssetViewAv,
     AssetViewListAV,
     AssetBulkInsertAv,
 ) 
 
-from application.api.views.summary_view.DepartmentPurchasedSummary import (
-    DepartmentPurchasedSummary,
-)
-
 # for testing purposes
-from application.api.views.core_view.test_view import (
+from application.api.views.core.test_view import (
     TestView
 )
 
-from application.api.views.registration_view.registration_view import (
+# summary
+from application.api.views.summary.DepartmentPurchasedSummary import (
+    DepartmentPurchasedSummary,
+)
+
+
+# auth
+from application.api.views.auth.RegistrationView import (
     RegistrationAV
+)
+from application.api.views.auth.LogoutView import (
+    LogoutAV
 )

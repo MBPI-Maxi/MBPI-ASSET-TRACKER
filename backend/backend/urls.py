@@ -27,9 +27,9 @@ from backend.custom import CustomTokenObtainPairView # updates the last_login in
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("application.api.views.core_view.urls", namespace="asset_np")),
-    path("summary/", include("application.api.views.summary_view.urls", namespace="summary_np")),
-    path("account/", include("application.api.views.registration_view.urls", namespace="registration_np")),
+    path("api/", include("application.api.views.core.urls", namespace="asset_np")),
+    path("summary/", include("application.api.views.summary.urls", namespace="summary_np")),
+    path("account/", include("application.api.views.auth.urls", namespace="registration_np")),
     # path('api/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
