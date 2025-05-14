@@ -1,12 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from application.api.serializers import DateRangeQuerySerializer
 from application.models import Department, Asset
 from collections import Counter
 from django.db.models import Sum
 
 class DepartmentPurchasedSummary(APIView):
+    # permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         query_serializer = DateRangeQuerySerializer(data=request.query_params)
         

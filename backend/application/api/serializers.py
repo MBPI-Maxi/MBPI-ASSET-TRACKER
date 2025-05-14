@@ -1,10 +1,14 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from django.contrib.auth import get_user_model
+from django.utils.timezone import now
 from application.models import Asset, Item, Department, Location, Employee
 from django.forms.models import model_to_dict
-# from datetime import date
+from django.db import transaction # transaction.atomic() is a feature in Django that wraps a set of database operations in a transaction — meaning they are all-or-nothing.
+
 from dev.logger import log_message
-# import re
 from typing import Type
 
 # use this serializer so that it is easy to show columns
@@ -17,17 +21,38 @@ class ItemSerializer(serializers.ModelSerializer):
         ]
         
 class EmployeeSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+    
     class Meta:
         model = Employee
         fields = [
             "id",
             "first_name",
             "last_name",
+            "email",  
             "is_superuser",
             "is_staff",
             "is_active",
-            "date_joined"
+            "date_joined",
+            "password",
         ]
+    
+    def update(self, instance, validated_data):
+        if validated_data.get("password"):
+            password = validated_data.pop("password")
+            instance.set_password(password)
+        
+        # set other fields 
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        instance.save()
+        return instance
+            
+class EmployeeListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        exclude = ["password"]
 
 class AssetViewModelSerializer(serializers.ModelSerializer):
     """
@@ -110,16 +135,21 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         validated_data["generated_by"] = current_user
         validated_data["updated_by"] = current_user
         
-        # return Asset.objects.create(**validated_data)
-        asset = Asset.objects.create(**validated_data)
         
-        # Generate QR code image now that asset_id exists
-        asset.generate_qr_code_image()
-        asset.save(update_fields=["qr_code_image"]) 
-        
-        # reversed call via related_name
-        # related_items = item_object.rel_items.all()
-        
+        # start the transaction of the creation of the items for consistency
+        with transaction.atomic():
+            # return Asset.objects.create(**validated_data)
+            asset = Asset.objects.create(**validated_data)
+            
+            try:
+                asset.generate_qr_code_image()
+                asset.save(update_fields=["qr_code_image"]) 
+            except Exception as e:
+                raise serializers.ValidationError({ "qr_code_error": str(e) })
+            
+            # reversed call via related_name
+            # related_items = item_object.rel_items.all()
+            
         return asset
     
     def update(self, instance, validated_data):
@@ -286,3 +316,22 @@ class RegistrationViewSerializer(serializers.Serializer):
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField(required=True)
+    
+# for custom token initialization to update the last_login column in the Employee table
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        
+        # Update last_login manually
+        self.user.last_login = now()
+        self.user.save(update_fields=['last_login'])
+        
+        # modify the response to include the current user details
+        data["user_details"] = {
+            "user_id": self.user.id,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+            "email": self.user.email
+        }
+        
+        return data

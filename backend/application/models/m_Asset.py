@@ -1,9 +1,10 @@
 from django.db import models
+from django.core.files import File
+from django.core.files.storage import default_storage
+import qrcode.constants
 from application.models.m_Department import Department
 from application.models.m_Item import Item
 from application.models.m_Location import Location
-from django.core.files import File
-from django.core.files.storage import default_storage
 from io import BytesIO
 import json
 import qrcode
@@ -66,13 +67,41 @@ class Asset(models.Model):
             "item_name": self.item_name_pii.item_name,
             "amount_purchased": str(self.amount_purchased),  # convert Decimal to string
             "brand": self.item_name_pii.brand,
-            "purchased_date": str(self.purchased_date),  # convert date to string
+            "purchased_date": str(self.purchased_date),  # convert date to string,
+            "location": self.location.name,
+            "created_at": str(self.created_at),
+            "generated_by": {
+                "first_name": self.generated_by.first_name,
+                "last_name": self.generated_by.last_name
+            },
+            "updated_by": {
+                "first_name": self.updated_by.first_name,
+                "last_name": self.updated_by.last_name
+            },
         }
         
+        # json_data = json.dumps(data)
+        # qr = qrcode.make(json_data)
+        # buffer = BytesIO()
+        # qr.save(buffer, format="PNG")
+
+        # filename = f"AST_{self.asset_id}.png"
+        # self.qr_code_image.save(filename, File(buffer), save=False)
+
         json_data = json.dumps(data)
-        qr = qrcode.make(json_data)
+        qr = qrcode.QRCode(
+        version=1,  # Controls the overall size; higher = bigger
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=4,  # Controls how many pixels each box is
+        border=4,  # Thickness of white border (in boxes)
+        )
+        qr.add_data(json_data)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+
         buffer = BytesIO()
-        qr.save(buffer, format="PNG")
+        img.save(buffer, format="PNG")
 
         filename = f"AST_{self.asset_id}.png"
         self.qr_code_image.save(filename, File(buffer), save=False)

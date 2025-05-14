@@ -23,3 +23,12 @@ from application.api.views.auth.RegistrationView import (
 from application.api.views.auth.LogoutView import (
     LogoutAV
 )
+
+from application.api.views.auth.LoginView import (
+    CustomLoginTokenObtainPairView
+)
+from application.api.views.users.UserView import (
+    UserListAV,
+    UserAv
+)
+

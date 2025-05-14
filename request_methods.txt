@@ -2,7 +2,7 @@ request properties of DRF
 
 | Property / Method              | Description                                                          |
 | ------------------------------ | -------------------------------------------------------------------- |
-| `request.query_params`         | For accessing **GET** parameters (`?key=value`). It's a `QueryDict`. |
+| `request.query_params.get`         | For accessing **GET** parameters (`?key=value`). It's a `QueryDict`. |
 | `request.data`                 | For accessing **POST, PUT, PATCH** body data (parsed content).       |
 | `request.FILES`                | For accessing uploaded files (e.g., in multipart form data).         |
 | `request.method`               | Returns the HTTP method as a string (`'GET'`, `'POST'`, etc.).       |

@@ -77,9 +77,10 @@ class AssetViewListAV(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         # if there are values within the department_name and item_name
-        # Start with the base queryset
+        # Start with the base queryset (sql joins syntax)
         assets = Asset.objects.select_related("department_pii", "item_name_pii", "location").all()
         
+        # filters
         if department_name:
             # Apply filters cumulatively
             assets = assets.filter(department_pii__department__iexact=department_name)
