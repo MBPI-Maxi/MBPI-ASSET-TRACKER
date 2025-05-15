@@ -64,7 +64,7 @@ class AssetViewAv(APIView):
             default_storage.delete(asset.qr_code_image.name)
         
         asset.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"msg": "Successfully deleted."}, status=status.HTTP_204_NO_CONTENT)
             
 class AssetViewListAV(APIView):
     permission_classes = [IsAuthenticated]
