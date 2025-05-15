@@ -35,21 +35,85 @@ class Asset(models.Model):
     """
     
     asset_id = models.AutoField(primary_key=True)
-    item_name_pii = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="rel_items") 
-    department_pii = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="rel_items")
-    amount_purchased = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
-    purchased_date = models.DateField(null=True, blank=True)
-    qr_code_image = models.ImageField(upload_to="qr_codes/", null=True, blank=True) 
-    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=False, related_name="rel_location")
-    is_found = models.BooleanField(default=True, null=True, blank=True) 
-    is_active = models.BooleanField(default=False, null=True, blank=True)
-    tag_type = models.CharField(max_length=10, choices=[("QR", "QR Code") ,("RFID", "RFID Tag")], default="QR") # tuple('savable value in db', 'the output of the response')
+    item_name_pii = models.ForeignKey(
+        Item, 
+        on_delete=models.CASCADE, 
+        related_name="rel_items"
+    ) 
+    department_pii = models.ForeignKey(
+        Department, 
+        on_delete=models.CASCADE, 
+        related_name="rel_items"
+    )
+    amount_purchased = models.DecimalField(
+        max_digits=19, 
+        decimal_places=2, 
+        null=True, 
+        blank=True
+    )
+    purchased_date = models.DateField(
+        null=True, 
+        blank=True
+    )
+    qr_code_image = models.ImageField(
+        upload_to="qr_codes/", 
+        null=True, 
+        blank=True
+    ) 
+    location = models.ForeignKey(
+        Location, 
+        on_delete=models.SET_NULL, 
+        null=True,
+        blank=False, 
+        related_name="rel_location"
+    )
+    is_found = models.BooleanField(
+        default=True, 
+        null=True, 
+        blank=True,
+        help_text="Indicates whether the asset is found or missing."
+    ) 
+    is_active = models.BooleanField(
+        default=False, 
+        null=True, 
+        blank=True,
+        help_text="Indicates whether the asset is active or retired."
+    )
+    tag_type = models.CharField(
+        max_length=10, 
+        choices=[("QR", "QR Code") ,("RFID", "RFID Tag")], 
+        default="QR"
+    ) # tuple('savable value in db', 'the output of the response')
+    vendor = models.CharField(
+        max_length=100, 
+        null=True, 
+        blank=True
+    )
     
     # delay the the string reference of the user
-    generated_by = models.ForeignKey("application.Employee", on_delete=models.SET_NULL, null=True, blank=True, related_name="rel_generated_by")
-    updated_by = models.ForeignKey("application.Employee", on_delete=models.SET_NULL, null=True, blank=True, related_name="rel_updated_by")
-    
-    remarks = models.CharField(max_length=255, null=True, blank=True)
+    generated_by = models.ForeignKey(
+        "application.Employee", 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name="rel_generated_by"
+    )
+    updated_by = models.ForeignKey(
+        "application.Employee", 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name="rel_updated_by"
+    )
+    remarks = models.CharField(
+        max_length=255, 
+        null=True, 
+        blank=True
+    )
+    warranty_expiry = models.DateField(
+        null=True, 
+        blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -80,26 +144,18 @@ class Asset(models.Model):
             },
         }
         
-        # json_data = json.dumps(data)
-        # qr = qrcode.make(json_data)
-        # buffer = BytesIO()
-        # qr.save(buffer, format="PNG")
-
-        # filename = f"AST_{self.asset_id}.png"
-        # self.qr_code_image.save(filename, File(buffer), save=False)
-
         json_data = json.dumps(data)
+        
         qr = qrcode.QRCode(
-        version=1,  # Controls the overall size; higher = bigger
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=4,  # Controls how many pixels each box is
-        border=4,  # Thickness of white border (in boxes)
+            version=1,  # Controls the overall size; higher = bigger
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=4,  # Controls how many pixels each box is
+            border=4,  # Thickness of white border (in boxes)
         )
         qr.add_data(json_data)
         qr.make(fit=True)
 
         img = qr.make_image(fill_color="black", back_color="white")
-
         buffer = BytesIO()
         img.save(buffer, format="PNG")
 

@@ -2,8 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from application.api.serializers import AssetViewModelSerializer, AssetViewListModelSerializer
+from application.api.serializers import AssetViewModelSerializer, AssetViewListModelSerializer, AssetViewModelGetSingleSerializer
 from application.models import Asset
+from django.core.files.storage import default_storage
 from dev.logger import log_message
 
 
@@ -46,11 +47,24 @@ class AssetViewAv(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         else:
-            serializer = AssetViewModelSerializer(asset, data=request.data)
+            serializer = AssetViewModelGetSingleSerializer(asset, data=request.data)
             
             if serializer.is_valid():
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+        try:
+            asset = Asset.objects.get(asset_id=pk)
+        except Asset.DoesNotExist:
+            return Response({"detail": "Asset not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Delete the QR code image file if exists
+        if asset.qr_code_image and default_storage.exists(asset.qr_code_image.name):
+            default_storage.delete(asset.qr_code_image.name)
+        
+        asset.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
             
 class AssetViewListAV(APIView):
     permission_classes = [IsAuthenticated]

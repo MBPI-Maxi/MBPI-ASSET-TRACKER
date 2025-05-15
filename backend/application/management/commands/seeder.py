@@ -2,6 +2,9 @@ from django.core.management.base import BaseCommand
 from application.models import Department, Employee, Location
 from enum import Enum
 
+def write_notice(instance, table_name):
+    instance.stdout.write(instance.style.NOTICE(f"Seeding {table_name} Table..."))
+
 class DepartmentConstant(Enum):
     DEPARTMENTS = [
         "IT",
@@ -39,11 +42,9 @@ class LocationConstant(Enum):
         "CONFERENCE ROOM"
     ]
 
-def write_notice(instance, table_name):
-    instance.stdout.write(instance.style.NOTICE(f"Seeding {table_name} Table..."))
-
 class Command(BaseCommand):
-    help = "Seeds Department database"
+    # help = "Seeds Department database"
+    help = "Seeds initial values in database"
     
     def handle(self, *args, **kwargs):
         write_notice(self, "Department")
@@ -57,6 +58,10 @@ class Command(BaseCommand):
         write_notice(self, "Location")
         for location in LocationConstant.LOCATION.value:
             self.seed_location(location)
+            
+        # write_notice(self, "Vendor")
+        # for vendor, contact in VendorConstants.VENDOR.value:
+        #     self.seed_vendor(vendor, contact)
 
     def seed_department(self, dept_name):
         if not Department.objects.filter(department=dept_name).exists():
@@ -108,4 +113,14 @@ class Command(BaseCommand):
                 self.style.WARNING(f"Location: '{location}' already exists.")
             )
     
-    
+    # def seed_vendor(self, vendor, contact):
+    #     if not Vendor.objects.filter(name=vendor).exists():
+    #         Vendor.objects.create(name=vendor, contact_number=contact)
+
+    #         self.stdout.write(
+    #             self.style.SUCCESS(f"Seeded Vender: {vendor}")
+    #         )
+    #     else:
+    #         self.stdout.write(
+    #             self.style.WARNING(f"Vender: '{vendor}' already exists.")
+    #         )

@@ -19,6 +19,11 @@ class ItemSerializer(serializers.ModelSerializer):
             "brand",
             "item_name"
         ]
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = "__all__"
         
 class EmployeeSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
@@ -52,7 +57,46 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class EmployeeListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        exclude = ["password"]
+        fields = [
+            "id", 
+            "username", 
+            "first_name", 
+            "last_name", 
+            "department", 
+            "email", 
+            "is_superuser", 
+            "is_staff", 
+            "is_active", 
+            "date_joined"
+        ]
+
+# a minimal serializer for showing details on the asset based on ID
+class AssetViewModelGetSingleSerializer(serializers.ModelSerializer):
+    item_name_pii = ItemSerializer(read_only=True)
+    generated_by = EmployeeSerializer(read_only=True)
+    updated_by = EmployeeSerializer(read_only=True)
+    location = LocationSerializer(read_only=True)
+    
+    class Meta:
+        model = Asset
+        fields = [
+            "asset_id",
+            "is_found",
+            "is_active",
+            "tag_type",
+            "location",
+            "amount_purchased",
+            "qr_code_image",
+            "purchased_date",
+            "remarks",
+            "vendor",
+            "warranty_expiry",
+            "item_name_pii",
+            "generated_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
 
 class AssetViewModelSerializer(serializers.ModelSerializer):
     """
@@ -84,7 +128,7 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
     item_name = serializers.CharField(write_only=True, required=True, allow_blank=False)
     location = serializers.CharField(write_only=True, required=True, allow_blank=False)
     brand = serializers.CharField(write_only=True, required=False, allow_blank=True)
-    is_active = serializers.BooleanField(write_only=True, required=True)
+    is_active = serializers.BooleanField(required=True)
     
     # serializer to show other data
     # NOTE: the variable name should match the column within the database.
@@ -107,9 +151,13 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             "purchased_date",
             "location",
             "created_at",
+            "updated_at",
             "generated_by",
             "updated_by",
             "item_name_pii",
+            "remarks",
+            "vendor",
+            "warranty_expiry",
         ]
     
     def create(self, validated_data):
@@ -130,11 +178,10 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         validated_data["department_pii"] = department_obj
         validated_data["location"] = location_obj
         
-        # fill up the generatd_by and updated_by using context from the AssetViewAv
+        # fill up the generated_by and updated_by using context from the AssetViewAv
         current_user = self.context["request"].user
         validated_data["generated_by"] = current_user
         validated_data["updated_by"] = current_user
-        
         
         # start the transaction of the creation of the items for consistency
         with transaction.atomic():
@@ -174,6 +221,8 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         instance.purchased_date = validated_data.get("purchased_date", instance.purchased_date)
         instance.is_active = validated_data.get("is_active", instance.is_active)
         instance.tag_type = validated_data.get("tag_type", instance.tag_type)
+        instance.remarks = validated_data.get("remarks", instance.remarks)
+        instance.vendor = validated_data.get("vendor", instance.vendor)
         
         # updated by.
         instance.updated_by = self.context["request"].user
@@ -195,9 +244,7 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         try:
             department_obj = Department.objects.get(department=department_value)
         except Department.DoesNotExist:
-            raise serializers.ValidationError({
-                "department": f"Department '{department_value}' was not found."
-            })
+            raise serializers.ValidationError(f"Department '{department_value}' was not found.")
         else:
             return department_obj
         
@@ -205,9 +252,7 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         try:
             location_obj = Location.objects.get(name=location_value)
         except Location.DoesNotExist:
-            raise serializers.ValidationError({
-                "location": f"Location name '{location_value}' was not found."
-            })
+            raise serializers.ValidationError(f"Location name '{location_value}' was not found.")
         else:
             return location_obj
                 
@@ -232,6 +277,8 @@ class AssetViewListModelSerializer(serializers.ModelSerializer):
     item_name = serializers.CharField(source="item_name_pii.item_name")
     brand = serializers.CharField(source="item_name_pii.brand")
     location = serializers.SerializerMethodField() # we needed to do this because some of the location is null
+    generated_by = EmployeeListSerializer(read_only=True)
+    updated_by = EmployeeListSerializer(read_only=True)
     
     class Meta:
         model = Asset
@@ -247,9 +294,11 @@ class AssetViewListModelSerializer(serializers.ModelSerializer):
             "location",
             "is_active",
             "tag_type",
-            "created_at",
+            "vendor",
             "generated_by",
             "updated_by",
+            "created_at",
+            "updated_at"
         ]
         
     def get_assets_str(self, obj):
@@ -335,3 +384,4 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         }
         
         return data
+    

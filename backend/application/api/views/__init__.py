@@ -14,6 +14,12 @@ from application.api.views.core.test_view import (
 from application.api.views.summary.DepartmentPurchasedSummary import (
     DepartmentPurchasedSummary,
 )
+from application.api.views.summary.AssetScanVerificationReport import (
+    AssetScanVerificationReportAV
+)
+from application.api.views.summary.LabelGenerationLog import (
+    LabelGenerationLogAV
+)
 
 
 # auth

@@ -5,6 +5,7 @@ from application.models import (
     Item,
     Location,
     Employee,
+    # Vendor
 )    
 
 # Register your models here.
@@ -13,3 +14,4 @@ admin.site.register(Department)
 admin.site.register(Employee)
 admin.site.register(Item)
 admin.site.register(Location)
+# admin.site.register(Vendor)
