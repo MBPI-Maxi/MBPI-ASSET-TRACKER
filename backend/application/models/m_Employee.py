@@ -23,23 +23,3 @@ class Employee(AbstractUser):
 
     def __str__(self):
        return self.username
-   
-
-# foreign key din to sa may department class
-# employee = Employee.objects.create(
-#     username="johndoe",
-#     password="password123",  # Don't forget to set a password (Django requires this)
-#     first_name="John",
-#     last_name="Doe",
-#     email="johndoe@example.com",
-#     department=it_department  # Assign the department here (example: it_department = Department.objects.get(name="IT"))
-# )
-
-# >>> from application.models import Employee, Department
-# >>> department_obj = Department.objects.get(department='IT')
-# >>> department_obj
-# <Department: IT>
-# >>> employee = Employee(username="JohnDoe", department=department_obj)
-# >>> employee.save()
-# >>> department_obj.department_rel.all()
-# <QuerySet [<Employee: JohnDoe>]>

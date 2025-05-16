@@ -3,3 +3,4 @@ from .m_Item import Item
 from .m_Asset import Asset
 from .m_Employee import Employee
 from .m_Location import Location
+from .m_AssetMaintenance import AssetMaintenance

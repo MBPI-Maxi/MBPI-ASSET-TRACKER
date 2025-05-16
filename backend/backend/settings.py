@@ -37,16 +37,15 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
+LOCAL_SERVER = env("LOCAL_SERVER")
+
 ALLOWED_HOSTS = []
 
-#DataFlair #Memcached
+# local memory cached use redis for optimization.
 CACHES = {
-    # "default": {
-    #     "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-    #     "LOCATION": "127.0.0.1:11211",
-    # }
     "default": {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",  # just a unique name for local memory cache
     }
 }
 

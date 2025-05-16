@@ -1,9 +1,20 @@
+from application.models import Employee
 from django.utils import timezone
-from datetime import datetime, time
+from datetime import datetime, time, date
 from django.utils.timezone import localtime
+from django.db.models.query import QuerySet
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.serializers import Serializer
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from typing import Type, Optional, Tuple
 
 
-def convert_datefield_to_datetime_field(start_date, end_date):
+def convert_datefield_to_datetime_field(
+    start_date: date, 
+    end_date: date
+) -> Tuple[datetime, datetime]:
     """
     Converts date objects into timezone-aware datetime objects representing
     the full span of each day.
@@ -32,10 +43,10 @@ def convert_datefield_to_datetime_field(start_date, end_date):
         end_datetime
     )
     
-def convert_timestamp(datetimefield):
+def convert_timestamp(datetimefield: datetime) -> str:
     return localtime(datetimefield).strftime(r"%Y-%m-%d %I:%M%p")
 
-def generate_name(asset_employee_id):
+def generate_name(asset_employee_id: Optional[Employee]) -> str:
     try:
         first_name = asset_employee_id.first_name
         last_name = asset_employee_id.last_name
@@ -43,3 +54,33 @@ def generate_name(asset_employee_id):
         raise ValueError("ID does not contain first_name and last_name")
     
     return f"{first_name} {last_name}" if asset_employee_id else "N/A"
+
+def create_pagination(
+    page_instance: Type[PageNumberPagination],
+    serializer_instance: Type[Serializer],
+    queryset: QuerySet,
+    request_object: Request,
+    view_instance: APIView,
+) -> Response: 
+    """
+    Paginate a queryset and return a paginated response serialized with the given serializer.
+
+    Args:
+        page_instance (Type[PageNumberPagination]): Pagination class to instantiate and use.
+        serializer_instance (Type[Serializer]): Serializer class to instantiate for the paginated data.
+        queryset (QuerySet): Django queryset to paginate.
+        request_object (Request): The current request object (used by paginator).
+        view_instance (APIView): The view instance that calls this function (used by paginator).
+
+    Returns:
+        Response: A DRF paginated Response object with serialized data.
+    """
+
+    paginator = page_instance()
+    paginated_values = paginator.paginate_queryset(queryset, request_object, view=view_instance)
+    
+    serializer = serializer_instance(paginated_values, many=True)
+    
+    return paginator.get_paginated_response(serializer.data)
+
+    

@@ -1,10 +1,14 @@
+from application.api.serializers import AssetViewModelSerializer, AssetViewListModelSerializer, AssetViewModelGetSingleSerializer
+from application.api.pagination import AssetViewPagination
+from application.api.views.helpers.helpers import create_pagination
+from application.models import Asset
+from django.core.files.storage import default_storage
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from application.api.serializers import AssetViewModelSerializer, AssetViewListModelSerializer, AssetViewModelGetSingleSerializer
-from application.models import Asset
-from django.core.files.storage import default_storage
+
 from dev.logger import log_message
 
 
@@ -50,7 +54,13 @@ class AssetViewAv(APIView):
             serializer = AssetViewModelGetSingleSerializer(asset, data=request.data)
             
             if serializer.is_valid():
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                copy_serializer = serializer.data.copy()
+                
+                qr_code_image_path = serializer.data.get("qr_code_image")
+                full_path_to_qr_code = f"{settings.LOCAL_SERVER}{qr_code_image_path}"
+                copy_serializer["qr_code_image"] = full_path_to_qr_code
+                                
+                return Response(copy_serializer, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk):
@@ -85,11 +95,17 @@ class AssetViewListAV(APIView):
             purchased_date
         ): 
             assets = Asset.objects.all()
-            serializer = AssetViewListModelSerializer(assets, many=True)
             
-            # log_message(request.user)            
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        
+            response = create_pagination(
+                page_instance=AssetViewPagination, 
+                serializer_instance=AssetViewListModelSerializer, 
+                queryset=assets, 
+                request_object=request, 
+                view_instance=self
+            )
+            
+            return response
+           
         # if there are values within the department_name and item_name
         # Start with the base queryset (sql joins syntax)
         assets = Asset.objects.select_related("department_pii", "item_name_pii", "location").all()
@@ -110,12 +126,19 @@ class AssetViewListAV(APIView):
         if purchased_date:
             assets = assets.filter(purchased_date=purchased_date)
         
-        serializer = AssetViewListModelSerializer(assets, many=True)
-        response = Response(serializer.data, status=status.HTTP_200_OK)
+        response = create_pagination(
+            page_instance=AssetViewPagination,
+            serializer_instance=AssetViewListModelSerializer,
+            queryset=assets,
+            request_object=request,
+            view_instance=self
+        )
         
         return response
         
 class AssetBulkInsertAv(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
         serializer = AssetViewModelSerializer(data=request.data, many=True)
         

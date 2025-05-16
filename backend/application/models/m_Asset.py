@@ -1,40 +1,23 @@
-from django.db import models
-from django.core.files import File
-from django.core.files.storage import default_storage
-import qrcode.constants
 from application.models.m_Department import Department
 from application.models.m_Item import Item
 from application.models.m_Location import Location
+from django.db import models
+from django.core.files import File
+from django.core.files.storage import default_storage
 from io import BytesIO
 import json
 import qrcode
+import qrcode.constants
 
 class Asset(models.Model):
     """
-    Asset table model stores the information about the item 
-
-    Class Attributes:
-        - asset_id - primary key of the Asset Table
-        - item_name_pii - the relationship column for the Item Table
-        - department_pii - the relationship column for the Department Table
-        - amount_purchased - the amount which the item was bought
-        - purchased_date - the date which the item was bought
-        - qr_code_image - an imagefield path to the qr image of each asset
-        - location - the relationship column for the Location Table
-        - generated_by - the current user that generates the value
-        - is_found - the status of the asset if 'Found' or 'Missing'
-        - is_active - the status of the asset if 'Active' or 'Retired'
-        - created_at - timestamp of when the asset was inserted to the db
-        - updated_at - timestamp of when the asset was updated to the db
-    
-    Dundar Methods:
-        - __str__ - returns the asset_id value.
-    
     Instance Methods:
-        - generate_qr_code_image - this generates a QRcode upon submitting the asset form.
+        - `generate_qr_code_image` - this generates a QRcode upon submitting the asset form.
     """
     
-    asset_id = models.AutoField(primary_key=True)
+    asset_id = models.AutoField(
+        primary_key=True
+    )
     item_name_pii = models.ForeignKey(
         Item, 
         on_delete=models.CASCADE, 

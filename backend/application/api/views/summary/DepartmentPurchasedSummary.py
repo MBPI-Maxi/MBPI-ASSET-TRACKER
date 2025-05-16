@@ -3,12 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from application.api.serializers import DateRangeQuerySerializer
+from application.api.pagination import DepartmentSummaryPagination
 from application.models import Department, Asset
 from collections import Counter
 from django.db.models import Sum
 
 class DepartmentPurchasedSummary(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    pagination_classes = DepartmentSummaryPagination
     
     def get(self, request):
         query_serializer = DateRangeQuerySerializer(data=request.query_params)
@@ -19,9 +21,16 @@ class DepartmentPurchasedSummary(APIView):
         start_date = query_serializer.validated_data["start_date"]
         end_date = query_serializer.validated_data["end_date"]
         
-        result = self.generate_summary(start_date, end_date)
-        return Response(result)
-    
+        summary_data = self.generate_summary(start_date, end_date)
+        
+        return self.paginated_response(request, summary_data)
+        
+    def paginated_response(self, request, response):
+        paginator = self.pagination_classes()
+        paginated_data = paginator.paginate_queryset(response, request, view=self)
+        
+        return paginator.get_paginated_response(paginated_data)
+        
     def generate_summary(self, start_date, end_date):
         department_obj = Department.objects.all()
         

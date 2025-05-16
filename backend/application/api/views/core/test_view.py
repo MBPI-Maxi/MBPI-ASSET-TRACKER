@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from dev.logger import log_message
 from rest_framework.permissions import IsAuthenticated
+from datetime import date
 
 class IsFromDepartment(permissions.BasePermission):
     """
@@ -28,10 +29,16 @@ class IsFromDepartment(permissions.BasePermission):
 
 class TestView(APIView):
     # permission_classes = [IsFromDepartment]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        return Response({'msg': 'success'})
+        purchased_date = date(2023, 11, 16)
+        today = date(2025, 5, 16)
+
+
+        asset_age_in_years = (today - purchased_date).days / 365
+        return Response(asset_age_in_years)
+        
     
     
 # sample code for caching

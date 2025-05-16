@@ -20,6 +20,13 @@ from application.api.views.summary.AssetScanVerificationReport import (
 from application.api.views.summary.LabelGenerationLog import (
     LabelGenerationLogAV
 )
+from application.api.views.summary.MaintenanceReport import (
+    MaintenanceReportListAV,
+    MaintenanceReportAV
+)
+from application.api.views.summary.DepreciationReport import (
+    DepreciationReportAV
+)
 
 
 # auth

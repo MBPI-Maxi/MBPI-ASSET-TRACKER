@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
-from application.models import Asset, Item, Department, Location, Employee
+from application.models import Asset, Item, Department, Location, Employee, AssetMaintenance
 from django.forms.models import model_to_dict
 from django.db import transaction # transaction.atomic() is a feature in Django that wraps a set of database operations in a transaction — meaning they are all-or-nothing.
 
@@ -384,4 +384,93 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         }
         
         return data
+
+# minimal serializer for the asset to return the vendor and some of the details
+class AssetSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Asset
+        fields = ["asset_id", "vendor"] 
+
+class MaintenanceReportListSerializer(serializers.ModelSerializer):
+    asset_detail = AssetSimpleSerializer(source="asset", read_only=True)
+    item_detail = ItemSerializer(source="asset.item_name_pii", read_only=True)
+    employee_detail = EmployeeSerializer(source="performed_by", read_only=True)
     
+    class Meta:
+        model = AssetMaintenance
+        fields = [
+            "maintenance_id",
+            "asset",
+            "asset_detail",
+            "item_detail",
+            "employee_detail",
+            "service_date",
+            # "performed_by",
+            "service_type",
+            "cost",
+            "status",
+            "remarks",
+            "created_at"
+        ]
+        read_only_fields = ["maintenance_id", "created_at", "performed_by"]
+
+class MaintenanceReportSerializer(serializers.ModelSerializer):
+    service_type = serializers.CharField(required=True)
+    service_date = serializers.DateField(required=True)
+    cost = serializers.DecimalField(required=True, max_digits=10, decimal_places=2)
+    
+    # asset source comes from the request body
+    asset_detail = AssetSimpleSerializer(source="asset", read_only=True)
+    item_detail = ItemSerializer(source="asset.item_name_pii", read_only=True)
+    employee_detail = EmployeeSerializer(source="performed_by", read_only=True)
+    
+    class Meta:
+        model = AssetMaintenance
+        fields = [
+            "maintenance_id",
+            "asset",
+            "asset_detail",
+            "item_detail",
+            "employee_detail",
+            "service_date",
+            # "performed_by",
+            "service_type",
+            "cost",
+            "status",
+            "remarks",
+            "created_at"
+        ]
+        read_only_fields = ["maintenance_id", "created_at", "performed_by"]
+    
+    def create(self, validated_data):
+       with transaction.atomic():
+            try:
+                validated_data["performed_by"] = self.context["request"].user
+                
+                return AssetMaintenance.objects.create(**validated_data)
+            except Exception as e:
+                raise serializers.ValidationError(f"Error on post request: {e}")
+
+class DepreciationReportSerializer(serializers.Serializer):
+    # useful life
+    # asset id 
+    asset_id = serializers.PrimaryKeyRelatedField(
+        queryset=Asset.objects.all(), 
+        required=True
+    )
+    useful_life = serializers.IntegerField(required=True)
+    
+    # the user should enter the depreciation method during the requests in the body.
+    DEPRECIATION_METHODS = [
+        ("straight_line", "Straight Line"),
+        ("double_declining", "Double Declining Balance"),
+        ("sum_of_years_digits", "Sum of Years' Digits"),
+    ]
+    
+    method = serializers.ChoiceField(
+        choices=DEPRECIATION_METHODS,
+        default="straight_line",
+        help_text="Choose the method of depreciation to calculate the asset's current value."
+    )
+    
+            
