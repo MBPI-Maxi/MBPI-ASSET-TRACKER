@@ -1,14 +1,11 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from application.models import Asset, Item, Department, Location, Employee, AssetMaintenance
 from django.forms.models import model_to_dict
 from django.db import transaction # transaction.atomic() is a feature in Django that wraps a set of database operations in a transaction — meaning they are all-or-nothing.
 
-from dev.logger import log_message
 from typing import Type
 
 # use this serializer so that it is easy to show columns
@@ -452,8 +449,6 @@ class MaintenanceReportSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f"Error on post request: {e}")
 
 class DepreciationReportSerializer(serializers.Serializer):
-    # useful life
-    # asset id 
     asset_id = serializers.PrimaryKeyRelatedField(
         queryset=Asset.objects.all(), 
         required=True
@@ -473,4 +468,17 @@ class DepreciationReportSerializer(serializers.Serializer):
         help_text="Choose the method of depreciation to calculate the asset's current value."
     )
     
-            
+class DepreciationReportListSerializer(serializers.Serializer):
+    DEPRECIATION_METHODS = [
+        ("straight_line", "Straight Line"),
+        ("double_declining", "Double Declining Balance"),
+        ("sum_of_years_digits", "Sum of Years' Digits"),
+    ]
+    
+    method = serializers.ChoiceField(
+        choices=DEPRECIATION_METHODS,
+        default="straight_line",
+        help_text="Choose the method of depreciation to calculate the asset's current value."
+    )
+    
+    useful_life = serializers.IntegerField(required=False, default=3)

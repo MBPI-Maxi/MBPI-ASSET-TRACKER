@@ -25,9 +25,9 @@ from application.api.views.summary.MaintenanceReport import (
     MaintenanceReportAV
 )
 from application.api.views.summary.DepreciationReport import (
-    DepreciationReportAV
+    DepreciationReportAV,
+    DepreciationReportListAV
 )
-
 
 # auth
 from application.api.views.auth.RegistrationView import (
@@ -40,6 +40,8 @@ from application.api.views.auth.LogoutView import (
 from application.api.views.auth.LoginView import (
     CustomLoginTokenObtainPairView
 )
+
+# user
 from application.api.views.users.UserView import (
     UserListAV,
     UserAv

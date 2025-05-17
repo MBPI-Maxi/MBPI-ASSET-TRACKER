@@ -94,7 +94,7 @@ class AssetViewListAV(APIView):
             location or
             purchased_date
         ): 
-            assets = Asset.objects.all()
+            assets = Asset.objects.all().order_by("asset_id")
             
             response = create_pagination(
                 page_instance=AssetViewPagination, 
@@ -108,7 +108,7 @@ class AssetViewListAV(APIView):
            
         # if there are values within the department_name and item_name
         # Start with the base queryset (sql joins syntax)
-        assets = Asset.objects.select_related("department_pii", "item_name_pii", "location").all()
+        assets = Asset.objects.select_related("department_pii", "item_name_pii", "location").all().order_by("asset_id")
         
         # filters
         if department_name:

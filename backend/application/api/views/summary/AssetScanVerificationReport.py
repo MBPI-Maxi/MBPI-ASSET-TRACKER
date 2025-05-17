@@ -1,7 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
 from application.api.serializers import DateRangeQuerySerializer
 from application.api.pagination import BasePageNumberPagination
 from application.api.views.helpers.helpers import convert_datefield_to_datetime_field, convert_timestamp, generate_name

@@ -1,8 +1,11 @@
 from application.models import Employee
+from copy import deepcopy
+from decimal import Decimal, ROUND_HALF_UP
+from django.conf import settings
 from django.utils import timezone
-from datetime import datetime, time, date
 from django.utils.timezone import localtime
 from django.db.models.query import QuerySet
+from datetime import datetime, time, date
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import Serializer
 from rest_framework.request import Request
@@ -80,7 +83,124 @@ def create_pagination(
     paginated_values = paginator.paginate_queryset(queryset, request_object, view=view_instance)
     
     serializer = serializer_instance(paginated_values, many=True)
+    original_serializer_data = serializer.data
+    serializer_data_copy = deepcopy(original_serializer_data)
     
-    return paginator.get_paginated_response(serializer.data)
+    for asset in serializer_data_copy:
+        qr_code_image = asset.get("qr_code_image")
+        
+        if qr_code_image:
+            asset["qr_code_image"] = f"{settings.LOCAL_SERVER}{qr_code_image}"
+    
+    return paginator.get_paginated_response(serializer_data_copy)
 
-    
+def straight_line_computation(
+        purchased_price: Decimal, 
+        useful_life: int,  
+        asset_age_years: Decimal
+    ):
+        annual_depreciation = purchased_price / useful_life
+        depreciated_value = annual_depreciation * asset_age_years
+        current_value = purchased_price - depreciated_value
+        
+        # calculate percentage
+        annual_depreciation_pct = (
+            annual_depreciation / purchased_price * 100
+        ).quantize(
+            Decimal("0.1"), 
+            rounding=ROUND_HALF_UP
+        )
+        current_depreciation_pct = (
+            depreciated_value / purchased_price * 100
+        ).quantize(
+            Decimal("0.1"), 
+            rounding=ROUND_HALF_UP
+        )
+        
+        return {
+            "original_cost": purchased_price,
+            "asset_age_years": round(asset_age_years, 2),
+            "annual_depreciation": round(annual_depreciation, 2),
+            "annual_depreciation_pct": f"{annual_depreciation_pct}%",
+            "depreciated_value": round(depreciated_value, 2),
+            "current_depreciation_pct": f"{current_depreciation_pct}%",
+            "current_value": round(current_value, 2),
+        }
+
+def double_declining_balance(
+    purchased_price: Decimal, 
+    useful_life: int, 
+    asset_age_years: Decimal
+):
+        depreciation_rate = Decimal(2) / Decimal(useful_life)
+        current_value = purchased_price
+        depreciated_value = Decimal(0)
+        full_years = int(asset_age_years)
+
+        for year in range(full_years):
+            annual_depreciation = current_value * depreciation_rate
+            depreciated_value += annual_depreciation
+            current_value -= annual_depreciation
+
+        # Prorated depreciation for the fractional year
+        remaining_fraction = asset_age_years - full_years
+        if remaining_fraction > 0:
+            partial_depreciation = (current_value * depreciation_rate) * remaining_fraction
+            depreciated_value += partial_depreciation
+            current_value -= partial_depreciation
+
+        current_depreciation_pct = (
+            depreciated_value / purchased_price * 100
+        ).quantize(
+            Decimal('0.1'), rounding=ROUND_HALF_UP
+        )
+
+        return {
+            "original_cost": round(purchased_price, 2),
+            "asset_age_years": round(asset_age_years, 2),
+            "depreciation_rate": f"{(depreciation_rate * 100).quantize(Decimal('0.1'))}%",
+            "depreciated_value": round(depreciated_value, 2),
+            "current_depreciation_pct": f"{current_depreciation_pct}%",
+            "current_value": round(max(current_value, 0), 2),
+        }
+        
+def sum_of_years_digits(
+    purchased_price: Decimal, 
+    useful_life: int, 
+    asset_age_years: Decimal
+):
+        total_years = useful_life
+        sum_of_years = sum(range(1, total_years + 1))
+        depreciated_value = Decimal(0)
+        current_value = purchased_price
+        full_years = int(asset_age_years)
+
+        for year in range(1, full_years + 1):
+            year_factor = (total_years - (year - 1)) / sum_of_years
+            annual_depreciation = purchased_price * Decimal(year_factor)
+            depreciated_value += annual_depreciation
+            current_value -= annual_depreciation
+
+        # Fractional year adjustment
+        remaining_fraction = asset_age_years - full_years
+        
+        if remaining_fraction > 0 and full_years < useful_life:
+            year_factor = (total_years - full_years) / sum_of_years
+            partial_depreciation = purchased_price * Decimal(year_factor) * remaining_fraction
+            depreciated_value += partial_depreciation
+            current_value -= partial_depreciation
+
+        current_depreciation_pct = (
+            depreciated_value / purchased_price * 100
+        ).quantize(
+                Decimal('0.1'), 
+                rounding=ROUND_HALF_UP
+        )
+
+        return {
+            "original_cost": round(purchased_price, 2),
+            "asset_age_years": round(asset_age_years, 2),
+            "depreciated_value": round(depreciated_value, 2),
+            "current_depreciation_pct": f"{current_depreciation_pct}%",
+            "current_value": round(max(current_value, 0), 2),
+        }

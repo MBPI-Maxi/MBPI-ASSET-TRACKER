@@ -18,3 +18,7 @@ class AssetViewPagination(BasePageNumberPagination):
 class DepartmentSummaryPagination(BasePageNumberPagination):
     page_size = 3
     max_page_size = 20
+    
+class DepreciationReportPagination(BasePageNumberPagination):
+    page_size = 5
+    max_page_size = 30
