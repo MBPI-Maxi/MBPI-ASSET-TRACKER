@@ -4,15 +4,23 @@ from rest_framework import status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from application.api.serializers import EmployeeListSerializer, EmployeeSerializer
 from application.models import Employee
+from application.api.pagination import BasePageNumberPagination
 
 class UserListAV(APIView):
     permission_classes = [IsAdminUser]
+    pagination_classes = BasePageNumberPagination
     
     def get(self, request):
         users = Employee.objects.all()
         serializer = EmployeeListSerializer(users, many=True)
         
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.paginated_response(request, serializer.data)
+
+    def paginated_response(self, request, response):
+        paginator = self.pagination_classes()
+        paginated_data = paginator.paginate_queryset(response, request, view=self)
+        
+        return paginator.get_paginated_response(paginated_data)
 
 class UserAv(APIView):
     permission_classes = [IsAuthenticated]
@@ -25,7 +33,7 @@ class UserAv(APIView):
             serializer = EmployeeSerializer(user, data=request.data, context={ "request": request })
             serializer.is_valid(raise_exception=True)
         except Employee.DoesNotExist:
-            return Response({ "msg": f"Username '{user}' does not exists." }, status=status.HTTP_404_NOT_FOUND)
+            return Response({ "msg": f"Username does not exists." }, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(serializer.data, status=status.HTTP_200_OK)
         
