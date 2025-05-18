@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "application",
     "corsheaders",
+    "django_filters",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist"
@@ -86,7 +87,10 @@ ROOT_URLCONF = "backend.urls"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ]
+    ],
+    # "DEFAULT_FILTER_BACKENDS": [
+    #     "django_filters.rest_framework.DjangoFilterBackend"
+    # ]
 }
 
 SIMPLE_JWT = {
@@ -118,17 +122,42 @@ AUTH_USER_MODEL = 'application.Employee' # make this into default user model
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        'ENGINE': env("DB_ENGINE"),
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT")
-    }
-}
 
+DJANGO_ENV = env("DJANGO_ENV", default="development.MBPI")
+
+if DJANGO_ENV == "development.MBPI":
+    DATABASES = {
+        "default": {
+            'ENGINE': env("DB_ENGINE"),
+            'NAME': env("DB_NAME"),
+            'USER': env("DB_USER"),
+            'PASSWORD': env("DB_PASSWORD"),
+            'HOST': env("DB_HOST"),
+            'PORT': env("DB_PORT")
+        }
+    }
+elif DJANGO_ENV == "development.HOME":
+    DATABASES = {
+        "default": {
+            'ENGINE': env("DB_ENGINE_LOCAL"),
+            'NAME': env("DB_NAME_LOCAL"),
+            'USER': env("DB_USER_LOCAL"),
+            'PASSWORD': env("DB_PASSWORD_LOCAL"),
+            'HOST': env("DB_HOST_LOCAL"),
+            'PORT': env("DB_PORT_LOCAL")
+        }
+    }
+elif DJANGO_ENV == "DOCKER":
+    DATABASES = {
+        "default": {
+            'ENGINE': env("DB_ENGINE_DOCKER"),
+            'NAME': env("DB_NAME_DOCKER"),
+            'USER': env("DB_USER_DOCKER"),
+            'PASSWORD': env("DB_PASSWORD_DOCKER"),
+            'HOST': env("DB_HOST_DOCKER"),
+            'PORT': env("DB_PORT_DOCKER")
+        }
+    }
 
 
 # Password validation

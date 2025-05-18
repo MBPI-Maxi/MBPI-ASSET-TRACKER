@@ -1,5 +1,6 @@
 from application.api.serializers import AssetViewModelSerializer, AssetViewListModelSerializer, AssetViewModelGetSingleSerializer
 from application.api.pagination import AssetViewPagination
+from application.api.filters import AssetCustomFilterBackend
 from application.api.views.helpers.helpers import create_pagination
 from application.models import Asset
 from django.core.files.storage import default_storage
@@ -78,6 +79,7 @@ class AssetViewAv(APIView):
             
 class AssetViewListAV(APIView):
     permission_classes = [IsAuthenticated]
+    filter_backends = [AssetCustomFilterBackend]
     
     # filter assets using query_params
     def get(self, request):
@@ -86,15 +88,18 @@ class AssetViewListAV(APIView):
         is_active = request.query_params.get("is_active")
         location = request.query_params.get("location")
         purchased_date = request.query_params.get("purchased_date")
+        is_found = request.query_params.get("is_found")
         
         if not (
             department_name or
             item_name or 
             is_active or 
             location or
-            purchased_date
+            purchased_date or 
+            is_found
         ): 
             assets = Asset.objects.all().order_by("asset_id")
+            # queryset = Asset.objects.select_related("department_pii", "item_name_pii", "location").order_by("asset_id")
             
             response = create_pagination(
                 page_instance=AssetViewPagination, 
@@ -108,23 +113,33 @@ class AssetViewListAV(APIView):
            
         # if there are values within the department_name and item_name
         # Start with the base queryset (sql joins syntax)
-        assets = Asset.objects.select_related("department_pii", "item_name_pii", "location").all().order_by("asset_id")
+        assets = Asset.objects.select_related(
+            "department_pii", 
+            "item_name_pii", 
+            "location"
+        ).all().order_by("asset_id")
         
         # filters
-        if department_name:
-            # Apply filters cumulatively
-            assets = assets.filter(department_pii__department__iexact=department_name)
-        if item_name:
-            assets = assets.filter(item_name_pii__item_name__iexact=item_name)
-        if is_active == "active":
-            assets = assets.filter(is_active=True)
-        if is_active == "retired":
-            assets = assets.filter(is_active=False)
-        if location:
-            exact_word = location.strip()
-            assets = assets.filter(location__name__iexact=exact_word)
-        if purchased_date:
-            assets = assets.filter(purchased_date=purchased_date)
+        # if department_name:
+        #     # Apply filters cumulatively
+        #     assets = assets.filter(department_pii__department__iexact=department_name)
+        # if item_name:
+        #     assets = assets.filter(item_name_pii__item_name__iexact=item_name)
+        # if is_active == "active":
+        #     assets = assets.filter(is_active=True)
+        # if is_active == "retired":
+        #     assets = assets.filter(is_active=False)
+        # if location:
+        #     exact_word = location.strip()
+        #     assets = assets.filter(location__name__iexact=exact_word)
+        # if purchased_date:
+        #     assets = assets.filter(purchased_date=purchased_date)
+        
+        # filter the queryset
+        assets = self.filter_by_query_params(
+            request=request,
+            queryset=assets
+        )
         
         response = create_pagination(
             page_instance=AssetViewPagination,
@@ -135,6 +150,11 @@ class AssetViewListAV(APIView):
         )
         
         return response
+
+    def filter_by_query_params(self, request, queryset):
+        for backend in self.filter_backends:
+            queryset = backend().filter_queryset(request, queryset, view=self)
+        return queryset
         
 class AssetBulkInsertAv(APIView):
     permission_classes = [IsAuthenticated]
