@@ -14,4 +14,4 @@ RUN npm install
 COPY . .
 
 # Start the dev server with host 0.0.0.0 so it's accessible outside the container
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "docker-dev"]
