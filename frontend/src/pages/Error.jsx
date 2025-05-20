@@ -2,7 +2,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, Typography, Button, CssBaseline } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-
 const errorTheme = createTheme({
     palette: {
       mode: 'light',
@@ -50,10 +49,10 @@ export default function ErrorPage() {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate('/')}
+          onClick={() => navigate("/app")}
           sx={{ mt: 2 }}
         >
-          Go Home
+          Go To App
         </Button>
       </Box>
     </ThemeProvider>

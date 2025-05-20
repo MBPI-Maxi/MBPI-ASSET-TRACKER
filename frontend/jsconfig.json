@@ -4,8 +4,11 @@
     "paths": {
       "@/*": ["*"],
       "@components/*": ["components/*"],
+      "@constants/*": ["constants/*"], 
+      "@context/*": ["context/*"],
       "@layout/*": ["layout/*"],
       "@pages/*": ["pages/*"],
+      "@provider/*": ["provider/*"],
       "@api/*": ["api/*"]
     }
   },
