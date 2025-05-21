@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, InputAdornment, IconButton } from '@mui/material';
 import { registrationSchema } from './validationSchema';
-import { RegistrationTextField } from '@/components/TextFieldForm';
+import { DefaultTextFieldStyle } from '@/components/TextFieldForm';
 import { useNavigate } from 'react-router-dom';
 import { RegistrationSnackBar } from '../alerts';
 import formValidation from "@pages/validate";
@@ -42,6 +42,7 @@ const Registration = () => {
 
       showSnackbar();
 
+      // if successful navigate to /app
       setTimeout(() => {
         navigate("/app");
       }, 2000);
@@ -68,7 +69,7 @@ const Registration = () => {
         Registration
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-        <RegistrationTextField
+        <DefaultTextFieldStyle
           label="First Name"
           name="first_name"
           value={formData.first_name}
@@ -77,7 +78,7 @@ const Registration = () => {
           helperText={errors.first_name}
           required
         />
-        <RegistrationTextField
+        <DefaultTextFieldStyle
           label="Last Name"
           name="last_name"
           value={formData.last_name}
@@ -86,7 +87,7 @@ const Registration = () => {
           helperText={errors.last_name}
           required
         />
-        <RegistrationTextField
+        <DefaultTextFieldStyle
           label="User Name"
           name="username"
           value={formData.username}
@@ -95,7 +96,7 @@ const Registration = () => {
           helperText={errors.username}
           required
         />
-        <RegistrationTextField
+        <DefaultTextFieldStyle
           label="Email Address"
           name="email"
           type="email"
@@ -105,7 +106,7 @@ const Registration = () => {
           helperText={errors.email}
           required
         />
-        <RegistrationTextField
+        <DefaultTextFieldStyle
           label="Password"
           name="password"
           type="password"
@@ -115,7 +116,7 @@ const Registration = () => {
           helperText={errors.password}
           required
         />
-        <RegistrationTextField
+        <DefaultTextFieldStyle
           label="Confirm Password"
           name="confirmPassword"
           type="password"

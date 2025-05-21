@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 
-export function RegistrationTextField({ ...props }) {
+export function DefaultTextFieldStyle({ ...props }) {
   return (
     <TextField
       fullWidth

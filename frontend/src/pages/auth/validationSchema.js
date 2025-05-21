@@ -18,6 +18,11 @@ export const registrationSchema = object({
     .required("Confirm password is required"),
 });
 
+export const loginSchema = object({
+  username: string().required("Username is required"),
+  password: string().required("Password is required"),
+})
+
 export const addAssetSchema = object({
   item_name: string()
     .required("Item name is required"),
@@ -61,4 +66,10 @@ export const updateAssetSchema = object({
 
   department: string()
     .required("department is required")
+    .oneOf([
+      "IT",
+      "Utility",
+      "HR",
+      "Finance"
+    ], "Invalid Department")
 })

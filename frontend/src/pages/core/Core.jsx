@@ -3,15 +3,12 @@ import { useTheme } from '@mui/material/styles';
 import { DrawerMenu } from '@/components/persistentDrawer/DrawerMenu';
 import { DRAWER_WIDTH } from '@/constants/layout';
 import { Outlet } from 'react-router-dom';
-
 import { Link as RouterLink } from 'react-router-dom';
-
 import { 
   Box, 
   CssBaseline, 
   Toolbar, 
   IconButton, 
-  Typography, 
   Divider, 
   Drawer,
   Link as MuiLink

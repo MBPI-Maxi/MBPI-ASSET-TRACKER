@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import {
-  Box, 
-  TextField, 
-  MenuItem, 
-  Checkbox, 
+  Box,
+  TextField,
+  MenuItem,
+  Checkbox,
   FormControlLabel,
-  Typography, 
+  Typography,
   Button
 } from '@mui/material';
+import { updateAssetSchema } from "@pages/auth/validationSchema";
+import { useFormContext } from '@/context/FormProvider';
+import formValidation from '@pages/validate';
+import { UpdateAssetSnackBar } from '@pages/alerts';
+import Deletebtn from '@/components/Deletebtn';
+import { DeleteSnackbar } from '@pages/alerts';
 
 const dummyAssets = [
   {
@@ -19,6 +25,7 @@ const dummyAssets = [
     is_found: false,
     location: "IT ROOM",
     amount_purchased: "35000",
+    purchased_date: "1995-10-11",
     remarks: "Testing",
     vendor: "Vendor A"
   },
@@ -31,6 +38,7 @@ const dummyAssets = [
     is_found: true,
     location: "HR ROOM",
     amount_purchased: "50000",
+    purchased_date: "2024-10-11",
     remarks: "Old laptop",
     vendor: "Vendor B"
   }
@@ -49,16 +57,27 @@ const UpdateAsset = () => {
     remarks: '',
     vendor: '',
   });
-  const [selectedId, setSelectedId] = useState(null); 
+  const [selectedId, setSelectedId] = useState(null);
 
-  // example only
+  // function for showing snackbar for deletion
+  const [deleteSnackbarOpen, setDeleteSnackbarOpen] = useState(false);
+  const showDeleteSnackbar = () => setDeleteSnackbarOpen(true);
+  const hideDeleteSnackbar = () => setDeleteSnackbarOpen(false);
+
+  const {
+    errors,
+    setErrors,
+    showSnackbar,
+    hideSnackbar,
+    openSnackbar
+  } = useFormContext();
 
   const handleSelectChange = (e) => {
     const id = parseInt(e.target.value);
     setSelectedId(id);
 
     const selectedAsset = dummyAssets.find(asset => asset.id === id);
-    
+
     if (selectedAsset) {
       setForm(selectedAsset);
     }
@@ -72,11 +91,21 @@ const UpdateAsset = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form data to submit:', form);
-    // Add PUT request here when backend is connected
+
+    // handle validation here
+    const validationErrors = await formValidation(form, updateAssetSchema);
+
+    if (Object.keys(validationErrors).length === 0) {
+      setErrors({});
+
+      showSnackbar();
+    } else {
+      setErrors(validationErrors);
+    }
   };
+
   return (
     <Box maxWidth="1000px" mx="auto" p={3}>
       <Typography variant="h5" gutterBottom>
@@ -85,7 +114,7 @@ const UpdateAsset = () => {
 
       <Box display="flex" gap={4} alignItems="flex-start">
         {/* Left Side: Dropdown */}
-        <Box flex={1}>
+        <Box flex={2}>
           <TextField
             select
             fullWidth
@@ -94,104 +123,146 @@ const UpdateAsset = () => {
             onChange={handleSelectChange}
             margin="normal"
           >
-            {dummyAssets.map(asset => (
-              <MenuItem key={asset.id} value={asset.id}>
-                {asset.item_name} - {asset.department}
-              </MenuItem>
-            ))}
+            {
+              dummyAssets.map(asset => (
+                <MenuItem key={asset.id} value={asset.id}>
+                  {asset.item_name} - {asset.department}
+                </MenuItem>
+              ))
+            }
           </TextField>
         </Box>
 
         {/* Right Side: Form */}
-        {selectedId && (
-          <Box component="form" onSubmit={handleSubmit} flex={2}>
-            <TextField
-              fullWidth
-              name="item_name"
-              label="Item Name"
-              value={form.item_name}
-              onChange={handleChange}
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              name="department"
-              label="Department"
-              value={form.department}
-              onChange={handleChange}
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              name="brand"
-              label="Brand"
-              value={form.brand}
-              onChange={handleChange}
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              name="location"
-              label="Location"
-              value={form.location}
-              onChange={handleChange}
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              name="amount_purchased"
-              label="Amount Purchased"
-              value={form.amount_purchased}
-              onChange={handleChange}
-              type="number"
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              name="vendor"
-              label="Vendor"
-              value={form.vendor}
-              onChange={handleChange}
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              name="remarks"
-              label="Remarks"
-              value={form.remarks}
-              onChange={handleChange}
-              margin="normal"
-            />
-
-            <Box display="flex" flexDirection="column" mt={2}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="is_active"
-                    checked={form.is_active}
-                    onChange={handleChange}
-                  />
-                }
-                label="Active Item?"
+        {
+          selectedId && (
+            <Box component="form" onSubmit={handleSubmit} flex={2}>
+              <TextField
+                fullWidth
+                name="item_name"
+                label="Item Name"
+                value={form.item_name}
+                onChange={handleChange}
+                margin="normal"
+                error={Boolean(errors.item_name)}
+                helperText={errors.item_name}
+                required
               />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="is_found"
-                    checked={form.is_found}
-                    onChange={handleChange}
-                  />
-                }
-                label="Item is present?"
+              <TextField
+                fullWidth
+                name="department"
+                label="Department"
+                value={form.department}
+                onChange={handleChange}
+                margin="normal"
+                error={Boolean(errors.department)}
+                helperText={errors.department}
+                required
+              />
+              <TextField
+                fullWidth
+                name="brand"
+                label="Brand"
+                value={form.brand}
+                onChange={handleChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                name="location"
+                label="Location"
+                value={form.location}
+                onChange={handleChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                name="amount_purchased"
+                label="Amount Purchased"
+                value={form.amount_purchased}
+                onChange={handleChange}
+                type="number"
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                name="purchased_date"
+                label="Purchased Date"
+                type="date"
+                value={form.purchased_date}
+                onChange={handleChange}
+                margin="normal"
+                error={Boolean(errors.purchased_date)}
+                helperText={errors.purchased_date || " "}
+                slotProps={{
+                  inputLabel: { shrink: true }
+                }}
+              />
+
+              <TextField
+                fullWidth
+                name="vendor"
+                label="Vendor"
+                value={form.vendor}
+                onChange={handleChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                name="remarks"
+                label="Remarks"
+                value={form.remarks}
+                onChange={handleChange}
+                margin="normal"
+              />
+
+              <Box display="flex" flexDirection="column" mt={2}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="is_active"
+                      checked={form.is_active}
+                      onChange={handleChange}
+                    />
+                  }
+                  label="Active Item?"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="is_found"
+                      checked={form.is_found}
+                      onChange={handleChange}
+                    />
+                  }
+                  label="Item is present?"
+                />
+              </Box>
+
+              <Button type="submit" variant="contained" sx={{ mt: 3 }}>
+                Update
+              </Button>
+
+              <Deletebtn 
+                selectedId={selectedId} 
+                dummyAssets={dummyAssets} 
+                setSelectedId={setSelectedId}
+                showSnackbar={showDeleteSnackbar} 
               />
             </Box>
-
-            <Button type="submit" variant="contained" sx={{ mt: 3 }}>
-              Update
-            </Button>
-          </Box>
-        )}
+          )
+        }
       </Box>
+      
+      {/* SNACKBAR FOR UPDATE AND DELETE HERE */}
+      {
+        openSnackbar &&
+        <UpdateAssetSnackBar openSnackbar={openSnackbar} hideSnackbar={hideSnackbar} />
+      }
+      {
+        deleteSnackbarOpen &&
+        <DeleteSnackbar openSnackbar={deleteSnackbarOpen} hideSnackbar={hideDeleteSnackbar} /> 
+      }
     </Box>
   );
 };

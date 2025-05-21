@@ -7,7 +7,11 @@ import Core from "./pages/core/Core";
 import AddAsset from "./pages/core/AddAsset";
 import WelcomePage from "./pages/core/WelcomePage";
 import UpdateAsset from "./pages/core/UpdateAsset";
+import QRCode from "./pages/core/QRCode";
 
+// provider
+import { SnackbarProvier } from "./context/SnackBarProvider";
+import { QRCodeProvider } from "./context/QRCodeContext";
 
 const router = createBrowserRouter([
   {
@@ -28,38 +32,21 @@ const router = createBrowserRouter([
         element: <AddAsset />
       },
       {
-        path: "asset/update",
+        path: "asset/manage",
         element: <UpdateAsset />
+      },
+      {
+        path: "qrcode/view",
+        element: (
+          <SnackbarProvier>
+            <QRCodeProvider>
+              <QRCode />
+            </QRCodeProvider>
+          </SnackbarProvier>
+        )
       }
     ]
   }
 ])
-
-
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: <Base />,
-//     errorElement: <ErrorPage />,
-//     children: [
-//       {
-//         index: true,
-//         element: <App />
-//       },
-//       {
-//         path: "/asset/add",
-//         element: <AddAsset />
-//       },
-//       {
-//         path: "/qr/codes",
-//         element: <QRPage />
-//       }
-//     ],
-//   },
-//   {
-//     path: "/error",
-//     element: <ErrorPage />
-//   }
-// ])
 
 export default router;

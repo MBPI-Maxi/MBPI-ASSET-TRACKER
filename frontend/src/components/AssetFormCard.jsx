@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import getDepartments from "@/api/datas";
+import getDepartments from "@/api/api";
 
 export default function AssetFormCard() {
   const [formData, setFormData] = useState({

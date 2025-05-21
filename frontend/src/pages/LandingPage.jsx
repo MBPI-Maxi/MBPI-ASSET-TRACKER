@@ -1,16 +1,18 @@
 // src/pages/LandingPage.jsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { useState } from 'react';
 import { Button, Box, Typography, Container, Dialog, DialogTitle, DialogContent } from '@mui/material';
-import Registration from './auth/Registration';
+import Registration from '@pages/auth/Registration';
+import Login from '@pages/auth/Login';
 
 const LandingPage = () => {
-  const [open, setOpen] = useState(false);
+  const [openRegister, setOpenRegister] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
 
-  const handleOpenRegister = () => setOpen(true);
-  const handleCloseRegister = () => setOpen(false);
+  const handleOpenRegister = () => setOpenRegister(true);
+  const handleCloseRegister = () => setOpenRegister(false);
+  const handleOpenLogin = () => setOpenLogin(true);
+  const handleCloseLogin = () => setOpenLogin(false);
  
   return (
     <Container maxWidth="sm">
@@ -39,7 +41,7 @@ const LandingPage = () => {
             marginTop: "30px"
           }}
         >
-          <Button variant="contained" color="primary" onClick={() => navigate('/login')}>
+          <Button variant="contained" color="primary" onClick={handleOpenLogin}>
             Login
           </Button>
           <Button variant="outlined" color="primary" onClick={handleOpenRegister}>
@@ -47,12 +49,18 @@ const LandingPage = () => {
           </Button>
         </Box>
       </Box>
-
+      
+      {/* Registration dialog box */}
       <DisplayDialogueRegistration 
-        open={open} 
+        open={openRegister} 
         handleCloseRegister={handleCloseRegister} 
       />
-    
+
+      {/* Login Dialog box */}
+      <DisplayDialogueLogin
+        open={openLogin}
+        handleCloseLogin={handleCloseLogin}
+      />
     </Container>
   );
 };
@@ -79,6 +87,33 @@ function DisplayDialogueRegistration({ open, handleCloseRegister }) {
         {/* <DialogTitle>Register</DialogTitle> */}
         <DialogContent>
           <Registration />
+        </DialogContent>
+    </Dialog>
+  )
+}
+
+function DisplayDialogueLogin({ open, handleCloseLogin }) {
+  return (
+    <Dialog 
+      open={open} 
+      onClose={handleCloseLogin} 
+      fullWidth 
+      maxWidth="sm"
+      slot={{
+        paper: {
+        sx: {
+          borderRadius: 4,
+          boxShadow: 6,
+          bgcolor: 'background.paper',
+          px: 3,
+          py: 2,
+        },
+      },
+      }}
+    >
+        {/* <DialogTitle>Register</DialogTitle> */}
+        <DialogContent>
+          <Login />
         </DialogContent>
     </Dialog>
   )

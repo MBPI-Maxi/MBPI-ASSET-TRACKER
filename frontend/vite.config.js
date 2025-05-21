@@ -16,5 +16,8 @@ export default defineConfig({
       '@provider': path.resolve(__dirname, './src/provider'),
       '@api': path.resolve(__dirname, './src/api'),
     }
+  },
+  build: {
+    sourcemap: false, // 🚫 disables source maps in production
   }
 })

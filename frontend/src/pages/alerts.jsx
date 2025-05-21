@@ -1,4 +1,17 @@
-import { Snackbar, Alert, Button } from "@mui/material"
+import { 
+  Snackbar,
+  Alert, 
+  Button, 
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Box,
+  Typography
+} from "@mui/material"
+
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+
 
 export function RegistrationSnackBar({ openSnackbar, hideSnackbar }) {
   return (
@@ -7,13 +20,28 @@ export function RegistrationSnackBar({ openSnackbar, hideSnackbar }) {
       autoHideDuration={2000}
       onClose={hideSnackbar}
       // message="Successfully registered!"
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
     >
       <Alert severity="success">
         Successfully Registered!
       </Alert>
     </Snackbar>
   );
+}
+
+export function LoginSnackBar({ openSnackbar, hideSnackbar }) {
+  return (
+    <Snackbar
+      open={openSnackbar}
+      autoHideDuration={2000}
+      onClose={hideSnackbar}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+    >
+      <Alert severity="success">
+        Login Successfully!
+      </Alert>
+    </Snackbar>
+  )
 }
 
 export function AddAssetSnackBar({ openSnackbar, hideSnackbar }) {
@@ -24,9 +52,9 @@ export function AddAssetSnackBar({ openSnackbar, hideSnackbar }) {
       autoHideDuration={6000}
       message="Form submitted successfully."
       action={
-        <Button 
-          color="secondary" 
-          size="small" 
+        <Button
+          color="secondary"
+          size="small"
           onClick={hideSnackbar}
         >
           CLOSE
@@ -36,4 +64,106 @@ export function AddAssetSnackBar({ openSnackbar, hideSnackbar }) {
   );
 }
 
-// export function UpdateAssetSnackbar()
+export function UpdateAssetSnackBar({ openSnackbar, hideSnackbar }) {
+  return (
+    <Snackbar
+      open={openSnackbar}
+      autoHideDuration={2000}
+      onClose={hideSnackbar}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+    >
+      <Alert severity="success">
+        Updated Successfully
+      </Alert>
+    </Snackbar>
+  );
+}
+
+export function DeleteSnackbar({ openSnackbar, hideSnackbar }) {
+  return (
+    <Snackbar
+      open={openSnackbar}
+      autoHideDuration={2000}
+      onClose={hideSnackbar}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+    >
+      <Alert severity="success">
+        Deleted Successfully
+      </Alert>
+    </Snackbar>
+  )
+}
+
+export function DeleteDialogue({ open, onClose, onConfirm}) {
+  return (
+    <Dialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="xs" 
+      fullWidth
+      slotProps={{
+        paper: {
+          sx: { borderRadius: 3, p:2 }
+        }
+      }}
+    >
+      <DialogTitle>
+        <Box display="flex" alignItems="center" gap={1}>
+          <DeleteForeverIcon color="error" fontSize="large" />
+          <Typography variant="h6" component="div">
+            Confirm Deletion
+          </Typography>
+        </Box>
+      </DialogTitle>
+
+      <DialogContent>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+          Are you sure you want to delete this asset? This action cannot be undone.
+        </Typography>
+      </DialogContent>
+
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button 
+          onClick={onClose} 
+          variant="outlined"
+          color="inherit"
+          sx={{ minWidth: 100 }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={onConfirm} 
+          color="error" 
+          variant="contained"
+          sx={{ minWidth: 100 }}
+          autoFocus
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
+export function QRCodeErrorFetching({ openSnackbar, hideSnackbar }) {
+  return (
+    <Snackbar
+      open={openSnackbar}
+      autoHideDuration={6000}
+      onClose={hideSnackbar}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+    >
+      <Alert severity="error">
+        Error fetching the QR code in the database
+      </Alert>
+    </Snackbar>
+  )
+}
+
+export function QRCodeAssetNotFound() {
+  return (
+    <Alert severity="info">
+      No asset found with that params.
+    </Alert>
+  );
+}

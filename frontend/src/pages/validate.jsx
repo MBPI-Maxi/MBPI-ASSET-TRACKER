@@ -1,7 +1,9 @@
 export default async function formValidation(formData, schema) {
   try {
     await schema.validate(formData, { abortEarly: false });
+    
     return {};
+    
   } catch (error) {
     const newErrors = {};
 
