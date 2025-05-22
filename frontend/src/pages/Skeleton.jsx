@@ -4,10 +4,17 @@ import {
   CardContent,
   CardActions,
   Grid,
-  Skeleton
+  Skeleton,
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody
 } from '@mui/material';
 
-export default function QRCodeSkeleton({ count = 5 }) {
+export function QRCodeSkeleton({ count = 5 }) {
   // Render `count` skeleton cards, default 5
   const newArray = new Array(count);
 
@@ -33,5 +40,34 @@ export default function QRCodeSkeleton({ count = 5 }) {
         ))
       }
     </>
+  );
+}
+
+export function RenderLoadingScreenTable({ rowCount = 5 }) {
+  return (
+    <Paper elevation={1}>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><Skeleton variant="text" width="40%" /></TableCell>
+              <TableCell><Skeleton variant="text" width="30%" /></TableCell>
+              <TableCell><Skeleton variant="text" width="30%" /></TableCell>
+              <TableCell><Skeleton variant="text" width="40%" /></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {[...Array(rowCount)].map((_, index) => (
+              <TableRow key={index}>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
 }

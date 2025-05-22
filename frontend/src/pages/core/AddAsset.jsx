@@ -1,13 +1,12 @@
 import {
   Box, Button, TextField, Checkbox, FormControlLabel,
   MenuItem, Typography,
-  InputLabel
 } from '@mui/material';
 import { useState } from 'react';
 import { AddAssetSnackBar } from '@pages/alerts';
-import formValidation from '@pages/validate';
 import { addAssetSchema } from '@pages/auth/validationSchema';
 import { useFormContext } from '@/context/FormProvider';
+import formValidation from '@pages/validate';
 
 export default function AddAsset() {
 

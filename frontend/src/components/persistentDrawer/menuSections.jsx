@@ -20,8 +20,8 @@ const menuSections = [
   {
     title: 'Summary',
     items: [
-      { label: 'Asset Summary', icon: <SummarizeIcon />, path: 'summary/assets' },
-      { label: 'Department Summary', icon: <SummarizeIcon />, path: 'summary/departments' },
+      // { label: 'Asset Summary', icon: <SummarizeIcon />, path: 'summary/assets' },
+      { label: 'Department Purchased Summary', icon: <SummarizeIcon />, path: 'summary/department-purchased' },
       { label: 'Location Summary', icon: <SummarizeIcon />, path: 'summary/locations' },
     ],
   },

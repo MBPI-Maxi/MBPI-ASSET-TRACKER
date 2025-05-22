@@ -2,12 +2,15 @@ import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./pages/Error";
 import LandingPage from "./pages/LandingPage";
 
+// main
+import App from "@pages/App";
+
 // core
-import Core from "./pages/core/Core";
 import AddAsset from "./pages/core/AddAsset";
 import WelcomePage from "./pages/core/WelcomePage";
 import UpdateAsset from "./pages/core/UpdateAsset";
 import QRCode from "./pages/core/QRCode";
+import DepartmentSummaryTable from "./pages/summary/DepartmentSummaryTable";
 
 // provider
 import { SnackbarProvier } from "./context/SnackBarProvider";
@@ -21,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/app",
-    element: <Core />,
+    element: <App />,
     children: [
       {
         index: true,
@@ -44,7 +47,15 @@ const router = createBrowserRouter([
             </QRCodeProvider>
           </SnackbarProvier>
         )
-      }
+      },
+      {
+        path: "summary/department-purchased",
+        element: (
+          <SnackbarProvier>
+            <DepartmentSummaryTable />
+          </SnackbarProvier>
+        )
+      },
     ]
   }
 ])

@@ -145,7 +145,7 @@ export function DeleteDialogue({ open, onClose, onConfirm}) {
   )
 }
 
-export function QRCodeErrorFetching({ openSnackbar, hideSnackbar }) {
+export function ErrorFetching({ openSnackbar, hideSnackbar, msg }) {
   return (
     <Snackbar
       open={openSnackbar}
@@ -154,16 +154,8 @@ export function QRCodeErrorFetching({ openSnackbar, hideSnackbar }) {
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
     >
       <Alert severity="error">
-        Error fetching the QR code in the database
+        {msg}
       </Alert>
     </Snackbar>
   )
-}
-
-export function QRCodeAssetNotFound() {
-  return (
-    <Alert severity="info">
-      No asset found with that params.
-    </Alert>
-  );
 }

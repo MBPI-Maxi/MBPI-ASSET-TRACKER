@@ -1,7 +1,7 @@
 // src/pages/LandingPage.jsx
 import React from 'react';
 import { useState } from 'react';
-import { Button, Box, Typography, Container, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import { Button, Box, Typography, Container, Dialog, DialogContent } from '@mui/material';
 import Registration from '@pages/auth/Registration';
 import Login from '@pages/auth/Login';
 
