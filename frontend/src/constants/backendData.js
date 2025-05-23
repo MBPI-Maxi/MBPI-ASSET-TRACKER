@@ -18,3 +18,9 @@ export const LOCATION_LIST = [
     "WAREHOUSE 1",
     "CONFERENCE ROOM"
 ]
+
+export const DEPRECIATION_METHODS = [
+  { label: 'Straight Line', value: 'straight_line' },
+  { label: 'Double Declining', value: 'double_declining' },
+  { label: 'Sum of the Years', value: 'sum_of_years_digits' }
+];

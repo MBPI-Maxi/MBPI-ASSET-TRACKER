@@ -2,6 +2,7 @@ import { Button } from "@mui/material";
 import { useState } from "react";
 import { DeleteDialogue } from "@/pages/alerts";
 
+// change this to use the actual data next time
 export default function Deletebtn({ selectedId, dummyAssets, setSelectedId, showSnackbar }) {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   

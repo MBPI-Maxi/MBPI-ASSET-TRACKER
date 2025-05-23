@@ -11,6 +11,9 @@ import WelcomePage from "./pages/core/WelcomePage";
 import UpdateAsset from "./pages/core/UpdateAsset";
 import QRCode from "./pages/core/QRCode";
 import DepartmentSummaryTable from "./pages/summary/DepartmentSummaryTable";
+import AssetScanVerificationTable from "./pages/summary/AssetScanVerificationTable";
+import LabelGenerationTable from "./pages/summary/LabelGenerationTable";
+import DepreciationTable from "./pages/depreciation/DepreciationTable";
 
 // provider
 import { SnackbarProvier } from "./context/SnackBarProvider";
@@ -56,6 +59,30 @@ const router = createBrowserRouter([
           </SnackbarProvier>
         )
       },
+      {
+        path: "summary/asset-scan-verification",
+        element: (
+          <SnackbarProvier>
+            <AssetScanVerificationTable />
+          </SnackbarProvier>
+        )
+      },
+      {
+        path: "summary/label-generation",
+        element: (
+          <SnackbarProvier>
+            <LabelGenerationTable />
+          </SnackbarProvier>
+        )
+      },
+      {
+        path: "summary/depreciation/report",
+        element: (
+          <SnackbarProvier>
+            <DepreciationTable />
+          </SnackbarProvier>
+        )
+      }
     ]
   }
 ])

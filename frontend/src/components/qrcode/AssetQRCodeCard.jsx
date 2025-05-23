@@ -90,42 +90,33 @@ export default function AssetQRCodeCard({ assets }) {
 function DialogItemInfo({ handleClose, open, data }) {
   const printRef = useRef();
 
-  const handlePrint = () => {
-    const printWindow = window.open('', '', 'width=800,height=600');
-    if (!printWindow) return;
-
-    const doc = printWindow.document;
-
-    const style = doc.createElement('style');
-    style.textContent = `
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: `${data?.item_name || 'QR'}-label`,
+    pageStyle: `
+      @page {
+        size: 58mm auto;
+        margin: 0;
       }
-      img {
-        max-width: 100%;
-        height: auto;
-        margin-top: 20px;
+      @media print {
+        body {
+          margin: 0;
+          -webkit-print-color-adjust: exact;
+        }
+        .print-area {
+          width: 58mm;
+          padding: 5mm;
+          text-align: center;
+          font-family: Arial, sans-serif;
+          font-size: 12px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
       }
-    ;`
-
-    const contentToPrint = printRef.current.cloneNode(true);
-
-    // Add QR code image manually for print
-    const img = doc.createElement('img');
-    img.src = data.qr_code_image;
-    img.alt = `QR Code for ${data.item_name}`;
-
-    doc.head.appendChild(style);
-    doc.body.appendChild(contentToPrint);
-    doc.body.appendChild(img);
-
-    setTimeout(() => {
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
-    }, 100);
-  };
+    `
+  });
 
   if (!data) return null;
 
@@ -142,7 +133,7 @@ function DialogItemInfo({ handleClose, open, data }) {
         aria-label="close"
         onClick={handleClose}
         sx={(theme) => ({
-          position: 'absolute',
+          position: "absolute",
           right: 8,
           top: 8,
           color: theme.palette.grey[500],
@@ -151,14 +142,12 @@ function DialogItemInfo({ handleClose, open, data }) {
         <CloseIcon />
       </IconButton>
       <DialogContent dividers>
-
         <Box>
           {
-            data && 
+            data &&
             <RenderAssetInModal ref={printRef} data={data} />
           }
         </Box>
-
       </DialogContent>
 
       <DialogActions>
@@ -211,40 +200,6 @@ const RenderAssetInModal = forwardRef(({ data }, ref) => {
   );
 });
 
-// function RenderAssetInModal({ data }) {
-//   const {
-//     asset_id,
-//     amount_purchased,
-//     purchased_date,
-//     department,
-//     item_name,
-//     brand,
-//     location,
-//     vendor,
-//     generated_by, // an object,
-//     updated_by, // an object
-//     created_at,
-//     updated_at
-//   } = data
-
-//   return (
-//     <Box display="flex" flexDirection="column" gap={1}>
-//       <Typography variant="h6">{item_name}</Typography>
-//       <Typography variant="body2">Asset ID: {asset_id}</Typography>
-//       <Typography variant="body2">Brand: {brand}</Typography>
-//       <Typography variant="body2">Amount Purchased: {amount_purchased}</Typography>
-//       <Typography variant="body2">Purchased Date: {purchased_date}</Typography>
-//       <Typography variant="body2">Department: {department}</Typography>
-//       <Typography variant="body2">Location: {location}</Typography>
-//       <Typography variant="body2">Vendor: {vendor}</Typography>
-//       <Typography variant="body2">Created By: {`${generated_by?.first_name} ${generated_by?.last_name}` || 'Unknown'}</Typography>
-//       <Typography variant="body2">Updated By: {`${updated_by?.first_name} ${updated_by.last_name}` || 'Unknown'}</Typography>
-//       <Typography variant="caption">Created At: {created_at}</Typography>
-//       <Typography variant="caption">Updated At: {updated_at}</Typography>
-//     </Box>
-//   )
-// }
-
 function RenderAssetDetails({
   asset_id,
   purchased_date,
@@ -254,22 +209,21 @@ function RenderAssetDetails({
 }) {
   return (
     <>
-      <Typography variant="body2" color="text.secondary" align='left'>
+      <Typography variant="body2" color="text.secondary" align="left">
         Asset_ID: {asset_id}
       </Typography>
-      <Typography variant="body2" color="text.secondary" align='left'>
+      <Typography variant="body2" color="text.secondary" align="left">
         Purchased Date: {purchased_date}
       </Typography>
-      <Typography variant="body2" color="text.secondary" align='left'>
+      <Typography variant="body2" color="text.secondary" align="left">
         Amount Purchased: {amount_purchased}
       </Typography>
-      <Typography variant="body2" color="text.secondary" align='left'>
+      <Typography variant="body2" color="text.secondary" align="left">
         Department: {department}
       </Typography>
-      <Typography variant="body2" color="text.secondary" align='left'>
+      <Typography variant="body2" color="text.secondary" align="left">
         Location: {location}
       </Typography>
     </>
   );
 }
-

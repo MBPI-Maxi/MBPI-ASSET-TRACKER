@@ -2,6 +2,7 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import EditIcon from '@mui/icons-material/Edit';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import SummarizeIcon from '@mui/icons-material/Summarize';
+import TrendingDown  from '@mui/icons-material/TrendingDown';
 
 const menuSections = [
   {
@@ -22,9 +23,16 @@ const menuSections = [
     items: [
       // { label: 'Asset Summary', icon: <SummarizeIcon />, path: 'summary/assets' },
       { label: 'Department Purchased Summary', icon: <SummarizeIcon />, path: 'summary/department-purchased' },
-      { label: 'Location Summary', icon: <SummarizeIcon />, path: 'summary/locations' },
+      { label: 'Asset Verification Scan Summary', icon: <SummarizeIcon />, path: 'summary/asset-scan-verification' },
+      { label: 'Label Generation Summary', icon: <SummarizeIcon />, path: 'summary/label-generation' },
     ],
   },
+  {
+    title: 'Depreciation',
+    items: [
+      { label: 'Compute Depreciation', icon: <TrendingDown/>, path: 'summary/depreciation/report'  }
+    ]
+  }
 ];
 
 export default menuSections;
