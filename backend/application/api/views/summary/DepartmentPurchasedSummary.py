@@ -9,7 +9,7 @@ from collections import Counter
 from django.db.models import Sum
 
 class DepartmentPurchasedSummary(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_classes = DepartmentSummaryPagination
     
     def get(self, request):

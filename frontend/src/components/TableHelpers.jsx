@@ -69,7 +69,7 @@ export function DepartmentPurchasedSummaryBody({ tableCell, keyName, alignment }
               { total_assets_purchased }
             </TableCell>
             <TableCell align={alignment}>
-              { total_expenditure.toLocaleString() || total_expenditure }
+              { total_expenditure?.toLocaleString() ?? total_expenditure }
             </TableCell>
             <TableCell align={alignment}>
               { total_asset_type }
@@ -146,7 +146,7 @@ export function AssetScanVerificationSummaryBody({ tableCell, keyName, alignment
               {updated_by}
             </TableCell>
             <TableCell align={alignment}>
-              {value.toLocaleString() || value}
+              {value?.toLocaleString() ?? value}
             </TableCell>
             <TableCell align={alignment}>
               {days_missing}

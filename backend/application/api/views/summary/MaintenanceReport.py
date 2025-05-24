@@ -2,7 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from application.api.serializers import MaintenanceReportSerializer, MaintenanceReportListSerializer
+from rest_framework.permissions import IsAuthenticated
+from application.api.serializers import MaintenanceReportSerializer, MaintenanceReportListSerializer, MaitenanceReportDetailSerializer
 from application.api.pagination import MaintenanceReportPagination
 from application.models import AssetMaintenance
 from dev.logger import log_message
@@ -13,9 +14,12 @@ from django.db.models import Sum
 # from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 
 class MaintenanceReportListAV(APIView):
+    permission_classes = [IsAuthenticated]
+    
     # get for search by asset ID
     # @method_decorator(cache_page(60 * 60 * 2))
     # @method_decorator(vary_on_headers("Authorization"))
+    
     def get(self, request):
         log_message("MaintenanceReportListAV GET method executed")
         
@@ -50,4 +54,15 @@ class MaintenanceReportAV(APIView):
         
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def get(self, request, pk):
+        try:
+            report_instance = AssetMaintenance.objects.get(maintenance_id=pk)
+            serializer = MaitenanceReportDetailSerializer(report_instance)
+        except AssetMaintenance.DoesNotExist:
+            return Response({
+                "detail": "Maintenance report not found"
+            }, status=status.HTTP_404_NOT_FOUND)            
+        else:
+            return Response(serializer.data, status=status.HTTP_200_OK)
     

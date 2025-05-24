@@ -126,6 +126,7 @@ function TableSummary({ data, nameSummaryReport }) {
       </>
     );
   }
+  
   return null;
 }
 

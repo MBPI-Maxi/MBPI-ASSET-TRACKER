@@ -3,6 +3,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import TrendingDown  from '@mui/icons-material/TrendingDown';
+import BuildIcon from '@mui/icons-material/Build';
 
 const menuSections = [
   {
@@ -31,6 +32,12 @@ const menuSections = [
     title: 'Depreciation',
     items: [
       { label: 'Compute Depreciation', icon: <TrendingDown/>, path: 'summary/depreciation/report'  }
+    ]
+  },
+  {
+    title: 'Maintenance',
+    items: [
+      { label: 'Add item', icon: <BuildIcon />, path: 'summary/maintenance/add' }
     ]
   }
 ];

@@ -17,6 +17,7 @@ urlpatterns = [
     path("label-generation-log", LabelGenerationLogAV.as_view(), name="label_generation_log_av"),
     path("maintenance-report", MaintenanceReportAV.as_view(), name="maintenance_report_av"),
     path("maintenance-report/list", MaintenanceReportListAV.as_view(), name="maintenance_report_list_av"),
+    path("maintenance-report/<int:pk>", MaintenanceReportAV.as_view(), name="maitenance_report_pk_av"),
     path("depreciation-report", DepreciationReportAV.as_view(), name="depreciation_report_av"),
     path("depreciation-report/list", DepreciationReportListAV.as_view(), name="depreciation_report_list_av"),
 ]

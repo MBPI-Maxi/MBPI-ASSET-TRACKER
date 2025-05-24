@@ -97,6 +97,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
+    # "ROTATE_REFRESH_TOKENS": True
 }
 
 TEMPLATES = [
@@ -209,3 +210,4 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
 ]
 
+CORS_ALLOW_CREDENTIALS = True

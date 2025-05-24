@@ -10,7 +10,7 @@ from django.utils import timezone
 
 # list view serializer
 class AssetScanVerificationReportAV(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_classes = AssetVerificationScanPagination
     
     def get(self, request):

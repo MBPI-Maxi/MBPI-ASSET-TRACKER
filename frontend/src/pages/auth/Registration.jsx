@@ -1,22 +1,40 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button, InputAdornment, IconButton } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem, 
+  FormHelperText, 
+  Alert 
+} from '@mui/material';
 import { registrationSchema } from './validationSchema';
 import { DefaultTextFieldStyle } from '@/components/TextFieldForm';
 import { useNavigate } from 'react-router-dom';
 import { RegistrationSnackBar } from '../alerts';
-import formValidation from "@pages/validate";
 import { useFormContext } from '@/context/FormProvider';
+import { DEPARTMENT_LIST } from '@/constants/backendData';
+import { useMutation } from '@tanstack/react-query';
+import API_ROUTES from '@/api/api';
+import formValidation from "@pages/validate";
 
 const Registration = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    email: "",
     first_name: "",
     last_name: "",
-    username: "",
-    email: "",
-    password: "",
+    department: "",
     confirmPassword: "",
   });
-  const navigate = useNavigate();
+
+  const [serverError, setServerError] = useState({});
+  
   const {
     openSnackbar, 
     showSnackbar, 
@@ -25,8 +43,16 @@ const Registration = () => {
     setErrors 
   } = useFormContext()
 
+  const mutation = useMutation({
+    mutationFn: (data) => API_ROUTES.postCreateUser(data)
+  })
+
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    
+    if (serverError.status) {
+      setServerError({});
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -36,16 +62,31 @@ const Registration = () => {
     if (Object.keys(validationErrors).length === 0) {
       setErrors({});
 
-      console.log("Form submitted successful");
+      mutation.mutate(formData, {
+        onSuccess: (responseData) => {
+          const { tokens, data } = responseData
 
-      // API CALL HERE
+          localStorage.setItem("user", JSON.stringify(data));
+          localStorage.setItem("access_token", tokens.access);
+          localStorage.setItem("refresh_token", tokens.refresh);
 
-      showSnackbar();
+          showSnackbar();
+          setServerError({});
 
-      // if successful navigate to /app
-      setTimeout(() => {
-        navigate("/app");
-      }, 2000);
+          setTimeout(() => {
+            navigate("/app");
+          }, 2000);
+        },
+        onError: (error) => {
+          console.error(`Server error has occured: ${error}`);
+          
+          setServerError({
+            status: true,
+            error: error
+          });
+        }
+      })
+      
     } else {
       setErrors(validationErrors);
     }
@@ -59,9 +100,6 @@ const Registration = () => {
         flexDirection: 'column',
         alignItems: 'center',
         padding: 4,
-        // border: '1px solid #ccc',
-        // borderRadius: 2,
-        // boxShadow: 2,
         bgcolor: 'background.paper',
       }}
     >
@@ -77,6 +115,7 @@ const Registration = () => {
           error={Boolean(errors.first_name)}
           helperText={errors.first_name}
           required
+          autoFocus  
         />
         <DefaultTextFieldStyle
           label="Last Name"
@@ -106,6 +145,37 @@ const Registration = () => {
           helperText={errors.email}
           required
         />
+        
+        <FormControl fullWidth required error={Boolean(errors.department)}>
+          <InputLabel id="registerDropdownDepartment">Department</InputLabel>
+          <Select
+            labelId="registerDropdownDepartment"
+            id="dropdownDepartmentRegistration"
+            value={formData.department}
+            name="department"
+            label="department"
+            onChange={handleChange}
+            error={Boolean(errors.department)}
+                      
+          >
+            {
+              DEPARTMENT_LIST.map((department, index) => {
+                let key = `registrationDpt-${department}-${index}`;
+
+                return <MenuItem key={key} value={department}>
+                  {department}
+                </MenuItem>
+              })
+            }
+          </Select>
+          {
+            errors.department &&
+            <FormHelperText>
+              { errors.department }
+            </FormHelperText>
+          }
+        </FormControl>
+
         <DefaultTextFieldStyle
           label="Password"
           name="password"
@@ -142,6 +212,15 @@ const Registration = () => {
         openSnackbar={openSnackbar}
         hideSnackbar={hideSnackbar}
       />
+
+      {/* alert if there is an error in the backend */}
+      {
+        serverError.status && serverError.error?.username && (
+          <Alert severity="error" sx={{mt: 2, textAlign: "center"}}>
+            { serverError.error.username }
+          </Alert>
+        )
+      }
     </Box>
   );
 };

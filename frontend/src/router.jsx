@@ -14,6 +14,8 @@ import DepartmentSummaryTable from "./pages/summary/DepartmentSummaryTable";
 import AssetScanVerificationTable from "./pages/summary/AssetScanVerificationTable";
 import LabelGenerationTable from "./pages/summary/LabelGenerationTable";
 import DepreciationTable from "./pages/depreciation/DepreciationTable";
+import ProtectedRoute from "./components/ProtectedRoute";
+import MaintenanceReport from "./pages/core/MaintenanceReport";
 
 // provider
 import { SnackbarProvier } from "./context/SnackBarProvider";
@@ -27,7 +29,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/app",
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
@@ -80,6 +86,14 @@ const router = createBrowserRouter([
         element: (
           <SnackbarProvier>
             <DepreciationTable />
+          </SnackbarProvier>
+        )
+      },
+      {
+        path: "summary/maintenance/add",
+        element: (
+          <SnackbarProvier>
+            <MaintenanceReport />
           </SnackbarProvier>
         )
       }

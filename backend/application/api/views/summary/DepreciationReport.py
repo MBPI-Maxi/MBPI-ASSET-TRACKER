@@ -57,7 +57,7 @@ class DepreciationReportAV(APIView):
 
 class DepreciationReportListAV(APIView):
     pagination_classes = DepreciationReportPagination
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get_params(self, request):
         serializer = DepreciationReportListSerializer(data=request.query_params)

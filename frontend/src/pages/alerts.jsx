@@ -159,3 +159,18 @@ export function ErrorFetching({ openSnackbar, hideSnackbar, msg }) {
     </Snackbar>
   )
 }
+
+export function MaintenanceReportSnackbar({ openSnackbar, hideSnackbar, msg, severity }) {
+  return (
+    <Snackbar
+      open={openSnackbar}
+      autoHideDuration={4000}
+      onClose={hideSnackbar}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+    >
+      <Alert severity={severity}>
+        { msg }
+      </Alert>
+    </Snackbar>
+  )
+}

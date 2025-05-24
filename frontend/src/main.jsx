@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')).render(
       <FormProvider>
         <RouterProvider router={router} />
       </FormProvider>
-    </QueryClientProvider> 
+    </QueryClientProvider>
   </StrictMode>
 )
 

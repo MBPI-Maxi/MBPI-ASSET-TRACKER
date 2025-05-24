@@ -12,6 +12,7 @@ export const registrationSchema = object({
   last_name: string().required("Last name is required"),
   username: string().required("Username is required"),
   email: string().email("Email is invalid").required("Email is required"),
+  department: string().required("Department is required"),
   password: string().required("Password is required"),
   confirmPassword: string()
     .oneOf([ref("password")], "Password did not match")
@@ -72,4 +73,26 @@ export const updateAssetSchema = object({
       "HR",
       "Finance"
     ], "Invalid Department")
+})
+
+export const maintenanceSchema = object({
+  service_type: string()
+    .required("Service type is required"),
+
+  asset: number()
+    .typeError("Asset ID must be a number")
+    .min(1, "Asset ID must be a valid number")
+    .required("Asset is required"),
+
+  service_date: date()
+    .typeError("Service date is invalid")
+    .required("Service date is required"),
+
+  cost: number()
+    .typeError("Cost must be a number")
+    .min(0, "Cost must be at least 0")
+    .required("Cost is required"),
+
+  // status: boolean()
+  //   .required("Status is required")
 })

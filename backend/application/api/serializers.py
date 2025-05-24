@@ -411,6 +411,11 @@ class MaintenanceReportListSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["maintenance_id", "created_at", "performed_by"]
 
+class MaitenanceReportDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AssetMaintenance
+        fields = "__all__"
+
 class MaintenanceReportSerializer(serializers.ModelSerializer):
     service_type = serializers.CharField(required=True)
     service_date = serializers.DateField(required=True)
