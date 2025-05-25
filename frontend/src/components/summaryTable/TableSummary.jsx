@@ -1,6 +1,7 @@
-import {
-  TableBody,
-} from "@mui/material";
+// import {
+//   TableBody,
+// } from "@mui/material";
+import TableBody from "@mui/material/TableBody";
 
 import {
   TableHeadCreate,

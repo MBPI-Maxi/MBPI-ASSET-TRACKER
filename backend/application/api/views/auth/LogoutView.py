@@ -28,7 +28,7 @@ class LogoutAV(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        refresh_token = request.COOKIES.get('refresh_token')
+        refresh_token = request.COOKIES.get("refresh_token")
 
         if refresh_token is None:
             return Response({"detail": "No refresh token found in cookies."}, status=status.HTTP_400_BAD_REQUEST)
@@ -41,8 +41,8 @@ class LogoutAV(APIView):
 
         # Clear both cookies
         response = Response({"detail": "Logout successful."}, status=status.HTTP_205_RESET_CONTENT)
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
+        response.delete_cookie("access_token", path="/", samesite="Lax")
+        response.delete_cookie("refresh_token", path="/", samesite="Lax")
         
         return response
 

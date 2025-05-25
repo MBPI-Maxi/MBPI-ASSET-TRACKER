@@ -1,7 +1,11 @@
-import {
-  Box, Button, TextField, Checkbox, FormControlLabel,
-  MenuItem, Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+
 import { useState } from 'react';
 import { AddAssetSnackBar } from '@pages/alerts';
 import { addAssetSchema } from '@pages/auth/validationSchema';

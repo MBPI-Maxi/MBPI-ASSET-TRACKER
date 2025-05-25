@@ -1,29 +1,39 @@
-import { 
-  Snackbar,
-  Alert, 
-  Button, 
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Box,
-  Typography
-} from "@mui/material"
+// import {
+//   Snackbar,
+//   Alert,
+//   Button,
+//   Dialog,
+//   DialogTitle,
+//   DialogContent,
+//   DialogActions,
+//   Box,
+//   Typography
+// } from "@mui/material"
+
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-
 
 export function RegistrationSnackBar({ openSnackbar, hideSnackbar }) {
   return (
     <Snackbar
       open={openSnackbar}
-      autoHideDuration={2000}
+      autoHideDuration={3000}
       onClose={hideSnackbar}
       // message="Successfully registered!"
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
     >
-      <Alert severity="success">
+      <Alert severity="success" onClose={hideSnackbar}>
         Successfully Registered!
+        Please Login. 😃
       </Alert>
     </Snackbar>
   );
@@ -94,16 +104,16 @@ export function DeleteSnackbar({ openSnackbar, hideSnackbar }) {
   )
 }
 
-export function DeleteDialogue({ open, onClose, onConfirm}) {
+export function DeleteDialogue({ open, onClose, onConfirm }) {
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose} 
-      maxWidth="xs" 
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xs"
       fullWidth
       slotProps={{
         paper: {
-          sx: { borderRadius: 3, p:2 }
+          sx: { borderRadius: 3, p: 2 }
         }
       }}
     >
@@ -123,17 +133,17 @@ export function DeleteDialogue({ open, onClose, onConfirm}) {
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button 
-          onClick={onClose} 
+        <Button
+          onClick={onClose}
           variant="outlined"
           color="inherit"
           sx={{ minWidth: 100 }}
         >
           Cancel
         </Button>
-        <Button 
-          onClick={onConfirm} 
-          color="error" 
+        <Button
+          onClick={onConfirm}
+          color="error"
           variant="contained"
           sx={{ minWidth: 100 }}
           autoFocus
@@ -161,6 +171,7 @@ export function ErrorFetching({ openSnackbar, hideSnackbar, msg }) {
 }
 
 export function MaintenanceReportSnackbar({ openSnackbar, hideSnackbar, msg, severity }) {
+
   return (
     <Snackbar
       open={openSnackbar}
@@ -168,8 +179,8 @@ export function MaintenanceReportSnackbar({ openSnackbar, hideSnackbar, msg, sev
       onClose={hideSnackbar}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
     >
-      <Alert severity={severity}>
-        { msg }
+      <Alert severity={severity} onClose={hideSnackbar} sx={{ width: "100%" }}>
+        {msg}
       </Alert>
     </Snackbar>
   )

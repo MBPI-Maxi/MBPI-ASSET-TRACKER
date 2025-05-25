@@ -96,7 +96,7 @@ function MaintenanceReport() {
           showSnackbar();
         }
       })
-    
+
     } else {
       setErrors(validationErrors);
     }
@@ -191,13 +191,17 @@ function MaintenanceReport() {
             checked={state.status}
             onChange={handleToggle}
             color="primary"
-            // error={Boolean(errors.status)}
+          // error={Boolean(errors.status)}
           />
         }
         label="Status (Completed)"
       />
 
-      <Button variant="contained" color="primary" type="submit">
+      <Button
+        variant="contained"
+        color="primary"
+        type="submit"
+      >
         Submit Report
       </Button>
 
@@ -210,12 +214,14 @@ function MaintenanceReport() {
             msg="Successfully Added"
             severity="success"
           />
-          : <MaintenanceReportSnackbar
-            openSnackbar={openSnackbar}
-            hideSnackbar={hideSnackbar}
-            msg="Error adding maintenance for this asset"
-            severity="error"
-          />
+          : openSnackbar && mutation.isError && (
+            <MaintenanceReportSnackbar
+              openSnackbar={openSnackbar}
+              hideSnackbar={hideSnackbar}
+              msg="Error adding maintenance for this asset"
+              severity="error"
+            />
+          )
       }
 
     </Box>

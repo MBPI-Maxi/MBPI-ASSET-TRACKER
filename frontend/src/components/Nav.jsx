@@ -1,4 +1,8 @@
-import { Drawer, Typography, Box } from "@mui/material";
+// import { Drawer, Typography, Box } from "@mui/material";
+import Drawer from "@mui/material/Drawer";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+
 import { CssBaseline } from "@mui/material";
 import AppBarComponent from "./AppBarComponent";
 

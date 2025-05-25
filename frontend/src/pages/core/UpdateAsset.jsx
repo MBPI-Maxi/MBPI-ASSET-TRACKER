@@ -1,13 +1,21 @@
 import { useState } from 'react';
-import {
-  Box,
-  TextField,
-  MenuItem,
-  Checkbox,
-  FormControlLabel,
-  Typography,
-  Button
-} from '@mui/material';
+// import {
+//   Box,
+//   TextField,
+//   MenuItem,
+//   Checkbox,
+//   FormControlLabel,
+//   Typography,
+//   Button
+// } from '@mui/material';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+
 import { updateAssetSchema } from "@pages/auth/validationSchema";
 import { useFormContext } from '@/context/FormProvider';
 import formValidation from '@pages/validate';
@@ -58,6 +66,7 @@ const UpdateAsset = () => {
     vendor: '',
   });
   const [selectedId, setSelectedId] = useState(null);
+  const [hasClicked, setHasClicked] = useState(false);
 
   // function for showing snackbar for deletion
   const [deleteSnackbarOpen, setDeleteSnackbarOpen] = useState(false);
@@ -85,6 +94,11 @@ const UpdateAsset = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    if (hasClicked) {
+      setHasClicked(false);
+    }
+
     setForm((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -239,7 +253,12 @@ const UpdateAsset = () => {
                 />
               </Box>
 
-              <Button type="submit" variant="contained" sx={{ mt: 3 }}>
+              <Button 
+                type="submit" 
+                variant="contained" 
+                sx={{ mt: 3 }}
+                onClick={() => setHasClicked(true)}
+              >
                 Update
               </Button>
 
@@ -256,7 +275,7 @@ const UpdateAsset = () => {
       
       {/* SNACKBAR FOR UPDATE AND DELETE HERE */}
       {
-        openSnackbar &&
+        openSnackbar && hasClicked &&
         <UpdateAssetSnackBar openSnackbar={openSnackbar} hideSnackbar={hideSnackbar} />
       }
       {

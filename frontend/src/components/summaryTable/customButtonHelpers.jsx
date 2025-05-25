@@ -1,8 +1,12 @@
 import { memo } from "react";
-import { Button, Stack, Typography, Box } from "@mui/material";
 import { handleExport } from "@/helpers/helper";
 import { Print, FileDownload } from '@mui/icons-material';
 import { addCommasToNumber } from "@/helpers/helper";
+// import { Button, Stack, Typography, Box } from "@mui/material";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 // Wrap StackButtonDesign with React.memo
 const StackButtonDesign = memo(function StackButtonDesign({ label, startIcon, onClickHandler }) {
@@ -49,7 +53,7 @@ export const AssetScanSummary = ({
         <Typography fontWeight={700}>
           Missing Asset: {missingAssetCount}
         </Typography>
-        <Typography>
+        <Typography fontWeight={700}>
           Total Missing Value: {addCommasToNumber(totalMissingValue)}
         </Typography>
       </Box>

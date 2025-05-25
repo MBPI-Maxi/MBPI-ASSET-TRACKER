@@ -4,15 +4,24 @@ import { DrawerMenu } from '@/components/persistentDrawer/DrawerMenu';
 import { DRAWER_WIDTH } from '@/constants/layout';
 import { Outlet } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
-import { 
-  Box, 
-  CssBaseline, 
-  Toolbar, 
-  IconButton, 
-  Divider, 
-  Drawer,
-  Link as MuiLink
-} from '@mui/material';
+// import { 
+//   Box, 
+//   CssBaseline, 
+//   Toolbar, 
+//   IconButton, 
+//   Divider, 
+//   Drawer,
+//   Link as MuiLink
+// } from '@mui/material';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import Link from '@mui/material/Link';
+
+
 import { 
   Main, 
   AppBar, 
@@ -22,6 +31,9 @@ import {
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MenuIcon from '@mui/icons-material/Menu';
+
+
+const MuiLink = Link;
 
 export default function Core() {
   const theme = useTheme();
@@ -55,6 +67,18 @@ export default function Core() {
             }}
           >
             Redirect to Home Page
+          </MuiLink>
+          <MuiLink
+            component={RouterLink}
+            to="/logout"
+            color='textSecondary'
+            sx={{
+              cursor: "pointer",
+              fontWeight: 700,
+              ml: 2,
+            }}
+          >
+            Logout
           </MuiLink>
         </Toolbar>
       </AppBar>

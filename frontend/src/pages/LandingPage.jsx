@@ -1,7 +1,14 @@
 // src/pages/LandingPage.jsx
-import React from 'react';
+// import React from 'react';
 import { useState } from 'react';
-import { Button, Box, Typography, Container, Dialog, DialogContent } from '@mui/material';
+// import { Button, Box, Typography, Container, Dialog, DialogContent } from '@mui/material';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+
 import Registration from '@pages/auth/Registration';
 import Login from '@pages/auth/Login';
 
@@ -86,7 +93,7 @@ function DisplayDialogueRegistration({ open, handleCloseRegister }) {
     >
         {/* <DialogTitle>Register</DialogTitle> */}
         <DialogContent>
-          <Registration />
+          <Registration closeDialog={handleCloseRegister} />
         </DialogContent>
     </Dialog>
   )
