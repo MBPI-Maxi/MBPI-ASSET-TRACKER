@@ -8,5 +8,10 @@ if there is an error make sure:
 
 docker should run now
 
+Also make sure in the docker desktop application,
+    - click on the setting on the docker
+    - you should be able to see the resource tab
+    - change the disk image location to a more preferred storage drive. Docker images consumes a large space
+
 then in the source code run the code
     - docker compose up --build
