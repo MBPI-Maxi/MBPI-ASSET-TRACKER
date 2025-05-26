@@ -175,6 +175,36 @@ export const createAsset = async (bodyData) => {
   }
 }
 
+export const updateAsset = async (assetId, bodyData) => {
+  try {
+    const res = await assetApiClient.put(`/id/${assetId}`, bodyData);
+
+    return res.data;
+
+  } catch (error) {
+
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+
+    throw new Error("Unexpected error has occured.");
+  }
+}
+
+export const delAsset = async (assetId) => {
+  try {
+    const res = await assetApiClient.delete(`/id/${assetId}`);
+
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+
+    throw new Error("Unexpected error has occured.");
+  }
+}
+
 export const verifyAuth = async () => {
   try{
     const res = await authApiClient.post("/verify");
@@ -185,7 +215,6 @@ export const verifyAuth = async () => {
     return false;
   }
 }
-
 
 // Refresh token logic with axios-auth-refresh on asset and summary clients
 createAuthRefreshInterceptor(assetApiClient, refreshAuthLogic);
@@ -201,7 +230,9 @@ const API_ROUTES = {
   postMaintenanceAsset: createMaintenanceReport,
   postIsAuthenticated: verifyAuth,
   postLogout: logoutUser,
-  postAsset: createAsset
+  postAsset: createAsset,
+  putAsset: updateAsset,
+  deleteAsset: delAsset,
 }
 
 export default API_ROUTES;

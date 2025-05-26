@@ -7,6 +7,8 @@ import {
   ref 
 } from "yup";
 
+import { DEPARTMENT_LIST } from "@/constants/backendData";
+
 export const registrationSchema = object({
   first_name: string().required("First name is required"),
   last_name: string().required("Last name is required"),
@@ -67,12 +69,7 @@ export const updateAssetSchema = object({
 
   department: string()
     .required("department is required")
-    .oneOf([
-      "IT",
-      "Utility",
-      "HR",
-      "Finance"
-    ], "Invalid Department")
+    .oneOf(DEPARTMENT_LIST, "Invalid Department")
 })
 
 export const maintenanceSchema = object({

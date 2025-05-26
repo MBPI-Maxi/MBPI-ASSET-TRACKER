@@ -11,12 +11,13 @@ import { AddAssetSnackBar } from '@pages/alerts';
 import { addAssetSchema } from '@pages/auth/validationSchema';
 import { useFormContext } from '@/context/FormProvider';
 import { DEPARTMENT_LIST, LOCATION_LIST } from '@/constants/backendData';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import API_ROUTES from '@/api/api';
 import formValidation from '@pages/validate';
 
 export default function AddAsset() {
-
+  const queryClient = useQueryClient();
+  const [formDisabled, setFormDisabled] = useState(false);
   const [form, setForm] = useState({
     item_name: '',
     department: '',
@@ -36,7 +37,24 @@ export default function AddAsset() {
     hideSnackbar,
     errors,
     setErrors
-  } = useFormContext()
+  } = useFormContext();
+
+  const resetForm = () => {
+    setForm({
+      item_name: '',
+      department: '',
+      amount_purchased: '',
+      purchased_date: '',
+      warranty_expiry: '',
+      location: '',
+      is_active: true,
+      is_found: true,
+      remarks: '',
+      vendor: ''
+    });
+
+    setFormDisabled(false);
+  };
 
   const mutation = useMutation({
     mutationFn: (data) => API_ROUTES.postAsset(data)
@@ -57,8 +75,7 @@ export default function AddAsset() {
 
     if (Object.keys(validationErrors).length === 0) {
       setErrors({});
-
-      console.log("Form submitted successful");
+      setFormDisabled(true);
 
       mutation.mutate(form, {
         onSuccess: () => {
@@ -68,6 +85,9 @@ export default function AddAsset() {
         onError: (error) => {
           showSnackbar();
           console.error("Error in the asset addition", error);
+        },
+        onSettled: () => {
+          queryClient.invalidateQueries(["allAssetsForUpdate"]);
         }
       });
     } else {
@@ -94,6 +114,7 @@ export default function AddAsset() {
               autoFocus
               error={Boolean(errors.item_name)}
               helperText={errors.item_name || " "}
+              disabled={formDisabled}
             />
 
             <TextField
@@ -107,6 +128,7 @@ export default function AddAsset() {
               required
               error={Boolean(errors.department)}
               helperText={errors.department || " "}
+              disabled={formDisabled}
             >
               {
                 DEPARTMENT_LIST.map((dept, index) => {
@@ -130,6 +152,7 @@ export default function AddAsset() {
               required
               error={Boolean(errors.location)}
               helperText={errors.location || " "}
+              disabled={formDisabled}
             >
               {
                 LOCATION_LIST.map((location, index) => {
@@ -151,6 +174,7 @@ export default function AddAsset() {
               type="number"
               margin="normal"
               helperText={errors.amount_purchased || " "}
+              disabled={formDisabled}
             />
           </Box>
 
@@ -166,6 +190,7 @@ export default function AddAsset() {
               margin="normal"
               error={Boolean(errors.purchased_date)}
               helperText={errors.purchased_date || " "}
+              disabled={formDisabled}
               slotProps={{
                 inputLabel: { shrink: true }
               }}
@@ -181,6 +206,7 @@ export default function AddAsset() {
               margin="normal"
               error={Boolean(errors.warranty_expiry)}
               helperText={errors.warranty_expiry || " "}
+              disabled={formDisabled}
               slotProps={{
                 inputLabel: { shrink: true }
               }}
@@ -194,6 +220,7 @@ export default function AddAsset() {
               onChange={handleChange}
               margin="normal"
               helperText={errors.vendor || " "}
+              disabled={formDisabled}
             />
 
             <TextField
@@ -204,6 +231,7 @@ export default function AddAsset() {
               onChange={handleChange}
               margin="normal"
               helperText={errors.remarks || " "}
+              disabled={formDisabled}
             />
           </Box>
         </Box>
@@ -215,6 +243,7 @@ export default function AddAsset() {
                 name="is_active"
                 checked={form.is_active}
                 onChange={handleChange}
+                disabled={formDisabled}
               />
             }
             label="Active Item?"
@@ -225,6 +254,7 @@ export default function AddAsset() {
                 name="is_found"
                 checked={form.is_found}
                 onChange={handleChange}
+                disabled={formDisabled}
               />
             }
             label="Item is present?"
@@ -248,11 +278,13 @@ export default function AddAsset() {
             openSnackbar={openSnackbar}
             hideSnackbar={hideSnackbar}
             msg="Form submitted successfully."
+            onCloseCallback={resetForm}
           />
           : <AddAssetSnackBar
             openSnackbar={openSnackbar}
             hideSnackbar={hideSnackbar}
             msg="Error submitting the form"
+            onCloseCallback={resetForm}
           />
       }
     </Box>

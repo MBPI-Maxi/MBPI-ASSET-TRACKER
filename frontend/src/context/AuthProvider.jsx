@@ -7,7 +7,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false); 
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
+  // const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {

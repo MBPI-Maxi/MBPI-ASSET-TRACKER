@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MaintenanceReport from "./pages/core/MaintenanceReport";
 import MaintenanceReportTable from "./pages/summary/MaintenanceReportTable";
 import Logout from "./pages/auth/Logout";
+import ProfilePage from "./pages/user/Profile";
 
 // provider
 import { SnackbarProvider } from "./context/SnackBarProvider";
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <WelcomePage />
+          },
+          {
+            path: "profile",
+            element: <ProfilePage />
           },
           {
             path: "asset/add",

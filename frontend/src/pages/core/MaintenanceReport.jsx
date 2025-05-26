@@ -166,24 +166,7 @@ function MaintenanceReport() {
         required
         fullWidth
       />
-      {/* <TextField
-        label="Asset ID"
-        name="asset"
-        type="number"
-        value={state.asset}
-        onChange={handleChange}
-        error={Boolean(errors.asset)}
-        helperText={errors.asset}
-        required
-        fullWidth
-        slotProps={{
-          input: {
-            inputMode: "numeric",
-            pattern: '[0-9]*',
-            type: "number"
-          }
-        }}
-      /> */}
+      
       <Autocomplete
         // Use allAssets initially, or searchResultsData if searchText is present
         options={autocompleteOptions}

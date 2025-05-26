@@ -1,15 +1,3 @@
-// import {
-//   Snackbar,
-//   Alert,
-//   Button,
-//   Dialog,
-//   DialogTitle,
-//   DialogContent,
-//   DialogActions,
-//   Box,
-//   Typography
-// } from "@mui/material"
-
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
@@ -19,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
@@ -54,19 +43,24 @@ export function LoginSnackBar({ openSnackbar, hideSnackbar }) {
   )
 }
 
-export function AddAssetSnackBar({ openSnackbar, hideSnackbar, msg }) {
+export function AddAssetSnackBar({ openSnackbar, hideSnackbar, msg, onCloseCallback }) {
+  const handleClose = () => {
+    hideSnackbar();
+    onCloseCallback();
+  }
+
   return (
     <Snackbar
       open={openSnackbar}
       onClose={hideSnackbar}
-      autoHideDuration={6000}
+      // autoHideDuration={6000}
       message={msg}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
       action={
         <Button
           color="secondary"
           size="small"
-          onClick={hideSnackbar}
+          onClick={handleClose}
         >
           CLOSE
         </Button>
@@ -81,7 +75,7 @@ export function UpdateAssetSnackBar({ openSnackbar, hideSnackbar }) {
       open={openSnackbar}
       autoHideDuration={2000}
       onClose={hideSnackbar}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
     >
       <Alert severity="success">
         Updated Successfully
@@ -96,7 +90,7 @@ export function DeleteSnackbar({ openSnackbar, hideSnackbar }) {
       open={openSnackbar}
       autoHideDuration={2000}
       onClose={hideSnackbar}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
     >
       <Alert severity="success">
         Deleted Successfully
@@ -105,7 +99,7 @@ export function DeleteSnackbar({ openSnackbar, hideSnackbar }) {
   )
 }
 
-export function DeleteDialogue({ open, onClose, onConfirm }) {
+export function DeleteDialogue({ open, onClose, onConfirm, isDeleting }) {
   return (
     <Dialog
       open={open}
@@ -139,6 +133,7 @@ export function DeleteDialogue({ open, onClose, onConfirm }) {
           variant="outlined"
           color="inherit"
           sx={{ minWidth: 100 }}
+          disabled={isDeleting}
         >
           Cancel
         </Button>
@@ -148,12 +143,13 @@ export function DeleteDialogue({ open, onClose, onConfirm }) {
           variant="contained"
           sx={{ minWidth: 100 }}
           autoFocus
+          disabled={isDeleting}
         >
-          Delete
+          {isDeleting ? <CircularProgress size={24} color="inherit" /> : "Delete"}
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }
 
 export function ErrorFetching({ openSnackbar, hideSnackbar, msg }) {

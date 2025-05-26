@@ -57,7 +57,7 @@ export default function Core() {
             <MenuIcon />
           </IconButton>
           
-          <MuiLink
+          {/* <MuiLink
             component={RouterLink}
             to="/"
             color='textSecondary'
@@ -67,7 +67,20 @@ export default function Core() {
             }}
           >
             Redirect to Home Page
+          </MuiLink> */}
+
+          <MuiLink
+            component={RouterLink}
+            to="profile"
+            color="inherit"
+            sx={{
+              cursor: "pointer",
+              fontWeight: 700
+            }}
+          >
+            Profile
           </MuiLink>
+
           <MuiLink
             component={RouterLink}
             to="/logout"

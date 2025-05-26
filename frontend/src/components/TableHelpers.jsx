@@ -131,32 +131,37 @@ export function AssetScanVerificationSummaryBody({ tableCell, keyName, alignment
             days_missing
           } = row;
 
-          return <TableRow key={key}>
-            <TableCell align={alignment}>
+          // let color = status === "Missing" && "red";
+          let fontWeight = status === "Missing" && 700;
+
+          return <TableRow key={key} sx={{
+            backgroundColor: status === "Missing" ? "rgb(255, 72, 72)" : "inherit"
+          }}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {asset_id}
             </TableCell>
-            <TableCell align={alignment}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {item_name}
             </TableCell>
-            <TableCell align={alignment}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {expected_location}
             </TableCell>
-            <TableCell align={alignment}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {status}
             </TableCell>
-            <TableCell align={alignment}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {last_seen}
             </TableCell>
-            <TableCell align={alignment}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {generated_by}
             </TableCell>
-            <TableCell align={alignment}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {updated_by}
             </TableCell>
-            <TableCell align={alignment}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {value?.toLocaleString() ?? value}
             </TableCell>
-            <TableCell align={alignment}>
+            <TableCell align={alignment} sx={{fontWeight: fontWeight}}>
               {days_missing}
             </TableCell>
           </TableRow>
@@ -180,6 +185,7 @@ export function LabelGenerationSummaryBody({ tableCell, keyName, alignment }) {
             timestamp,
             remarks,
           } = row;
+    
 
           return <TableRow key={key}>
             <TableCell align={alignment}>
@@ -273,8 +279,6 @@ export function MaintenanceReportSummaryBody({ tableCell, keyName, alignment }) 
           let key = `${keyName}-${index}`;
           return <ExpandableRowForMaintenance key={key} row={row} alignment={alignment} />;
         })
-
-        
       }
     </>
   )

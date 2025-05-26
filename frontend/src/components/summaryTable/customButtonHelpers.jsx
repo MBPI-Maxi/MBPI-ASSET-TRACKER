@@ -1,16 +1,20 @@
 import { memo } from "react";
 import { handleExport } from "@/helpers/helper";
 import { Print, FileDownload } from '@mui/icons-material';
-// import { Button, Stack, Typography, Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 
 // Wrap StackButtonDesign with React.memo
-const StackButtonDesign = memo(function StackButtonDesign({ label, startIcon, onClickHandler }) {
+const StackButtonDesign = memo(function StackButtonDesign({ label, startIcon, onClickHandler, ...props }) {
   return (
     <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
-      <Button variant="contained" startIcon={startIcon} onClick={onClickHandler}>
-        {label}
+      <Button 
+        variant="contained" 
+        startIcon={startIcon} 
+        onClick={onClickHandler} 
+        {...props} 
+      >
+        { label }
       </Button>
     </Stack>
   );
@@ -34,28 +38,7 @@ export const ExportToExcel = memo(function ExportToExcel({ data, fileName, expor
       label="Export"
       startIcon={<FileDownload />}
       onClickHandler={() => handleExport(data, fileName, exportType)}
+      disabled={fileName === "maintenance_report_summary"}
     />
   );
 });
-
-// export const AssetScanSummary = ({ 
-//   nameSummaryReport, 
-//   missingAssetCount, 
-//   totalMissingValue 
-// }) => {
-//   if (nameSummaryReport === "asset-scan-verification-report") {
-
-//     return (
-//       <Box>
-//         <Typography fontWeight={700}>
-//           Missing Asset: {missingAssetCount}
-//         </Typography>
-//         <Typography fontWeight={700}>
-//           Total Missing Value: {addCommasToNumber(totalMissingValue)}
-//         </Typography>
-//       </Box>
-//     );
-//   }
-  
-//   return null;
-// }
