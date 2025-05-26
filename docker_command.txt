@@ -1,1 +1,12 @@
-docker compose up --build
+Procedure:
+    install docker on windows 86-64
+
+try and run docker desktop.
+
+if there is an error make sure:
+    - to run cmd on administrator then type 'wsl' there will be prompt please read to install the latest version of the wsl
+
+docker should run now
+
+then in the source code run the code
+    - docker compose up --build
