@@ -10,6 +10,7 @@ import {
   AssetScanVerificationSummaryBody,
   LabelGenerationSummaryBody,
   DepreciationTableSummaryBody,
+  MaintenanceReportSummaryBody
 } from "@/components/TableHelpers";
 
 const tableHeadForDptPurchasedSummary = [
@@ -28,8 +29,12 @@ const tableHeadForLabelGenerationReport = [
 
 const tableHeadForDepreciation = [
   "Asset ID", "Item Name", "Original Cost", "Asset Age Years", "Annual Depreciation",
-  "Annual Depreciation PCT", "Depreciation Value", "Current Depreciation PCT", 
+  "Annual Depreciation PCT", "Depreciation Value", "Current Depreciation PCT",
   "Current Value", "Depreciation Method", "Useful Life"
+]
+
+const tableHeadForMaintenance = [
+  "Info", "Asset ID", "Service Date", "Service Type", "Cost", "Status"
 ]
 
 function TableSummary({ data, nameSummaryReport }) {
@@ -84,7 +89,7 @@ function TableSummary({ data, nameSummaryReport }) {
   else if (nameSummaryReport === "label-generation-report") {
     return (
       <>
-        <TableHeadCreate 
+        <TableHeadCreate
           tableCell={tableHeadForLabelGenerationReport}
           keyName="labelGenerationSummaryHeader"
           alignment="right"
@@ -94,7 +99,7 @@ function TableSummary({ data, nameSummaryReport }) {
           {
             rows.length === 0
               ? <ShowNoRecordsFound colSpan={5} />
-              : <LabelGenerationSummaryBody 
+              : <LabelGenerationSummaryBody
                 tableCell={data}
                 keyName="labelGenerationSummaryBody"
                 alignment="right"
@@ -107,7 +112,7 @@ function TableSummary({ data, nameSummaryReport }) {
   else if (nameSummaryReport === "depreciation-report") {
     return (
       <>
-        <TableHeadCreate 
+        <TableHeadCreate
           tableCell={tableHeadForDepreciation}
           keyName="labelDepreciationSummaryHeader"
           alignment="right"
@@ -117,7 +122,7 @@ function TableSummary({ data, nameSummaryReport }) {
           {
             rows.length === 0
               ? <ShowNoRecordsFound colSpan={11} />
-              : <DepreciationTableSummaryBody 
+              : <DepreciationTableSummaryBody
                 tableCell={data}
                 keyName="depreciateSummaryBody"
                 alignment="right"
@@ -127,7 +132,30 @@ function TableSummary({ data, nameSummaryReport }) {
       </>
     );
   }
-  
+  else if (nameSummaryReport === "maintenance-report-summary") {
+    return (
+      <>
+        <TableHeadCreate
+          tableCell={tableHeadForMaintenance}
+          keyName="labelMaintenanceSummaryHeader"
+          alignment="right"
+        />
+
+        <TableBody>
+          {
+            rows.length === 0
+              ? <ShowNoRecordsFound colSpan={6} />
+              : <MaintenanceReportSummaryBody
+                tableCell={data}
+                keyName="maintenanceSummaryBody"
+                alignment="right"
+              />
+          }
+        </TableBody>
+      </>
+    )
+  }
+
   return null;
 }
 

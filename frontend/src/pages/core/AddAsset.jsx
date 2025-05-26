@@ -10,6 +10,9 @@ import { useState } from 'react';
 import { AddAssetSnackBar } from '@pages/alerts';
 import { addAssetSchema } from '@pages/auth/validationSchema';
 import { useFormContext } from '@/context/FormProvider';
+import { DEPARTMENT_LIST, LOCATION_LIST } from '@/constants/backendData';
+import { useMutation } from '@tanstack/react-query';
+import API_ROUTES from '@/api/api';
 import formValidation from '@pages/validate';
 
 export default function AddAsset() {
@@ -35,18 +38,9 @@ export default function AddAsset() {
     setErrors
   } = useFormContext()
 
-  // Dummy dropdown options
-  const departments = [
-    { id: 1, name: 'IT' },
-    { id: 2, name: 'HR' },
-    { id: 3, name: 'Finance' },
-  ];
-
-  const locations = [
-    { id: 1, name: 'IT ROOM' },
-    { id: 2, name: 'STOCK ROOM' },
-    { id: 3, name: 'MEETING ROOM' },
-  ];
+  const mutation = useMutation({
+    mutationFn: (data) => API_ROUTES.postAsset(data)
+  })
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -65,7 +59,17 @@ export default function AddAsset() {
       setErrors({});
 
       console.log("Form submitted successful");
-      showSnackbar();
+
+      mutation.mutate(form, {
+        onSuccess: () => {
+          showSnackbar();
+          console.log("Success submitting the form");
+        },
+        onError: (error) => {
+          showSnackbar();
+          console.error("Error in the asset addition", error);
+        }
+      });
     } else {
       setErrors(validationErrors);
     }
@@ -104,9 +108,15 @@ export default function AddAsset() {
               error={Boolean(errors.department)}
               helperText={errors.department || " "}
             >
-              {departments.map(dept => (
-                <MenuItem key={dept.id} value={dept.id}>{dept.name}</MenuItem>
-              ))}
+              {
+                DEPARTMENT_LIST.map((dept, index) => {
+                  let key = `asset-${dept}-${index}`;
+
+                  return <MenuItem key={key} value={dept}>
+                    {dept}
+                  </MenuItem>
+                })
+              }
             </TextField>
 
             <TextField
@@ -121,9 +131,15 @@ export default function AddAsset() {
               error={Boolean(errors.location)}
               helperText={errors.location || " "}
             >
-              {locations.map(loc => (
-                <MenuItem key={loc.id} value={loc.id}>{loc.name}</MenuItem>
-              ))}
+              {
+                LOCATION_LIST.map((location, index) => {
+                  let key = `asset-${location}-${index}`;
+
+                  return <MenuItem key={key} value={location}>
+                    {location}
+                  </MenuItem>
+                })
+              }
             </TextField>
 
             <TextField
@@ -150,8 +166,8 @@ export default function AddAsset() {
               margin="normal"
               error={Boolean(errors.purchased_date)}
               helperText={errors.purchased_date || " "}
-              slotProps={{ 
-                inputLabel: { shrink: true } 
+              slotProps={{
+                inputLabel: { shrink: true }
               }}
             />
 
@@ -165,8 +181,8 @@ export default function AddAsset() {
               margin="normal"
               error={Boolean(errors.warranty_expiry)}
               helperText={errors.warranty_expiry || " "}
-              slotProps={{ 
-                inputLabel: { shrink: true } 
+              slotProps={{
+                inputLabel: { shrink: true }
               }}
             />
 
@@ -227,8 +243,17 @@ export default function AddAsset() {
 
       {/* Snack bar here */}
       {
-        openSnackbar &&
-        <AddAssetSnackBar openSnackbar={openSnackbar} hideSnackbar={hideSnackbar} />
+        openSnackbar && mutation.isSuccess
+          ? <AddAssetSnackBar
+            openSnackbar={openSnackbar}
+            hideSnackbar={hideSnackbar}
+            msg="Form submitted successfully."
+          />
+          : <AddAssetSnackBar
+            openSnackbar={openSnackbar}
+            hideSnackbar={hideSnackbar}
+            msg="Error submitting the form"
+          />
       }
     </Box>
   );

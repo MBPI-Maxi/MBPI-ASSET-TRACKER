@@ -5,8 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import IsAuthenticated
 from application.api.serializers import MaintenanceReportSerializer, MaintenanceReportListSerializer, MaitenanceReportDetailSerializer
 from application.api.pagination import MaintenanceReportPagination
+from application.api.serializers import DateRangeQuerySerializer
 from application.models import AssetMaintenance
-from dev.logger import log_message
+from application.api.filters import MaintenanceCustomDateFilterBackend
 from django.db.models import Sum
 
 # from django.utils.decorators import method_decorator
@@ -15,26 +16,27 @@ from django.db.models import Sum
 
 class MaintenanceReportListAV(APIView):
     permission_classes = [IsAuthenticated]
+    filter_backends = [MaintenanceCustomDateFilterBackend]
     
     # get for search by asset ID
     # @method_decorator(cache_page(60 * 60 * 2))
     # @method_decorator(vary_on_headers("Authorization"))
-    
     def get(self, request):
-        log_message("MaintenanceReportListAV GET method executed")
+        date_serializer = DateRangeQuerySerializer(data=request.query_params)
+        date_serializer.is_valid(raise_exception=True)
         
         maintenance_qs = AssetMaintenance.objects.all().order_by("created_at")
+        maintenance_qs = self.filter_by_date(request, maintenance_qs)
+        
         total_cost = self.calculate_total_maintenance_cost(maintenance_qs)
         
         paginator = MaintenanceReportPagination()
+        paginator.total_maintenance_cost = str(total_cost)
+        
         result_page = paginator.paginate_queryset(maintenance_qs, request)
         serializer = MaintenanceReportListSerializer(result_page, many=True)
         
         paginated_response = paginator.get_paginated_response(serializer.data)
-        paginated_response.data.setdefault(
-            "total_maintenance_cost",
-            str(total_cost)
-        )
         
         return paginated_response
     
@@ -44,6 +46,11 @@ class MaintenanceReportListAV(APIView):
         )["total_maintenance_cost"] or 0
         
         return total_cost
+
+    def filter_by_date(self, request, queryset):
+        for backend in self.filter_backends:
+            queryset = backend().filter_queryset(request, queryset, view=self)
+        return queryset
 
 class MaintenanceReportAV(APIView):
     permission_classes = [IsAuthenticated]

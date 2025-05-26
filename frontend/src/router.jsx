@@ -17,6 +17,7 @@ import DepreciationTable from "./pages/depreciation/DepreciationTable";
 import AuthLayout from "./layout/AuthLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MaintenanceReport from "./pages/core/MaintenanceReport";
+import MaintenanceReportTable from "./pages/summary/MaintenanceReportTable";
 import Logout from "./pages/auth/Logout";
 
 // provider
@@ -103,6 +104,14 @@ const router = createBrowserRouter([
               </SnackbarProvider>
             )
           },
+          {
+            path: "summary/maintenance/list",
+            element: (
+              <SnackbarProvider>
+                <MaintenanceReportTable />
+              </SnackbarProvider>
+            )
+          }
         ]
       },
       {

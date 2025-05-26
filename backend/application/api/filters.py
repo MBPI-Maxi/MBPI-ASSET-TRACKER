@@ -44,3 +44,16 @@ class AssetCustomFilterBackend(BaseFilterBackend):
             queryset = self.apply_boolean_filters("is_found", is_found, queryset)
 
         return queryset
+    
+class MaintenanceCustomDateFilterBackend(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        params = request.query_params
+        start_date = params.get("start_date")
+        end_date = params.get("end_date")
+        
+        if start_date:
+            queryset = queryset.filter(created_at__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(created_at__lte=end_date)
+        
+        return queryset

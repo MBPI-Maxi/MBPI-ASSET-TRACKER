@@ -12,7 +12,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from dev.logger import log_message
 
-
 class AssetViewAv(APIView):
     permission_classes = [IsAuthenticated]
     

@@ -71,7 +71,7 @@ export default function Core() {
           <MuiLink
             component={RouterLink}
             to="/logout"
-            color='textSecondary'
+            color='inherit'
             sx={{
               cursor: "pointer",
               fontWeight: 700,

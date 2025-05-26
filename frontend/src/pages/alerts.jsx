@@ -54,13 +54,14 @@ export function LoginSnackBar({ openSnackbar, hideSnackbar }) {
   )
 }
 
-export function AddAssetSnackBar({ openSnackbar, hideSnackbar }) {
+export function AddAssetSnackBar({ openSnackbar, hideSnackbar, msg }) {
   return (
     <Snackbar
       open={openSnackbar}
       onClose={hideSnackbar}
       autoHideDuration={6000}
-      message="Form submitted successfully."
+      message={msg}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       action={
         <Button
           color="secondary"

@@ -85,6 +85,7 @@ export default function Login() {
       console.log("Verification error:", error);
 
       setTimeout(() => {
+        // hideSnackbar();
         navigate("/");
       }, 2000);
     }

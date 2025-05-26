@@ -88,7 +88,7 @@ const Registration = ({ closeDialog }) => {
             closeDialog();
 
             navigate("/");
-          }, 3000);
+          }, 2000);
         },
         onError: (error) => {
           console.error(`Server error has occured: ${error}`);

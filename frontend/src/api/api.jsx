@@ -161,6 +161,20 @@ export const createMaintenanceReport = async (bodyData) => {
   }
 }
 
+export const createAsset = async (bodyData) => {
+  try {
+    const res = await assetApiClient.post("", bodyData);
+
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+
+    throw new Error("Unexpected error has occured.");
+  }
+}
+
 export const verifyAuth = async () => {
   try{
     const res = await authApiClient.post("/verify");
@@ -186,7 +200,8 @@ const API_ROUTES = {
   postLogin: loginUser,
   postMaintenanceAsset: createMaintenanceReport,
   postIsAuthenticated: verifyAuth,
-  postLogout: logoutUser
+  postLogout: logoutUser,
+  postAsset: createAsset
 }
 
 export default API_ROUTES;
