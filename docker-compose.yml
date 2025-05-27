@@ -27,7 +27,8 @@ services:
     image: postgres:16
     restart: always
     environment:
-      POSTGRES_DB: asset_tracker_dev
+      # POSTGRES_DB: asset_tracker_dev
+      POSTGRES_DB: docker_dev
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     ports:
