@@ -44,7 +44,7 @@ export const addAssetSchema = object({
 
   warranty_expiry: date()
     .typeError("Warranty expiry is invalid")
-    // .required("Warranty expiry is required")
+    .required("Warranty expiry is required")
     .min(ref("purchased_date"), "Warranty expiry cannot be before purchased date"),
 
   location: string()
