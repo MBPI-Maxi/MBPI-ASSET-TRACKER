@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { updateAssetSchema } from "@pages/auth/validationSchema";
 import { useFormContext } from '@/context/FormProvider';
-import { UpdateAssetSnackBar, DeleteSnackbar } from '@pages/alerts';
+import { UpdateAssetSnackBar, DeleteSnackbar, UpdateAssetInstruction } from '@pages/alerts';
 
 import formValidation from '@pages/validate';
 import Deletebtn from '@/components/Deletebtn';
@@ -192,6 +192,8 @@ const UpdateAsset = () => {
 
   return (
     <Box maxWidth="1000px" mx="auto" p={3}>
+      <UpdateAssetInstruction />
+      
       <Typography variant="h5" gutterBottom>
         Update Asset
       </Typography>

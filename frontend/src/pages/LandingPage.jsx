@@ -1,7 +1,4 @@
-// src/pages/LandingPage.jsx
-// import React from 'react';
 import { useState } from 'react';
-// import { Button, Box, Typography, Container, Dialog, DialogContent } from '@mui/material';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';

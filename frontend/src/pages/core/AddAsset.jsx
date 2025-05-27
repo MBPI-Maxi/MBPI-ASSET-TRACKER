@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 import { useState } from 'react';
-import { AddAssetSnackBar } from '@pages/alerts';
+import { AddAssetSnackBar, AddAssetInstruction } from '@pages/alerts';
 import { addAssetSchema } from '@pages/auth/validationSchema';
 import { useFormContext } from '@/context/FormProvider';
 import { DEPARTMENT_LIST, LOCATION_LIST } from '@/constants/backendData';
@@ -97,6 +97,7 @@ export default function AddAsset() {
 
   return (
     <Box>
+      <AddAssetInstruction />
       <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 1000, mx: 'auto', p: 2 }}>
         <Typography variant="h5" gutterBottom>Add Asset</Typography>
 

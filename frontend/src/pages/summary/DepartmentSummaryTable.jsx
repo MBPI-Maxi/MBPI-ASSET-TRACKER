@@ -1,9 +1,12 @@
 import API_ROUTES from '@/api/api';
 import SummaryLayout from '@/layout/SummaryLayout';
+import { SummaryInstruction } from '../alerts';
 
 export default function DepartmentSummaryTable() {
   return (
-    <SummaryLayout 
+    <>
+      <SummaryInstruction />
+      <SummaryLayout 
       title="Department Purchased Summary"
       apiFunc={API_ROUTES.getSummaries}
       endpoint="dept-purchased-summary"
@@ -12,5 +15,6 @@ export default function DepartmentSummaryTable() {
       snackBarMessage="Error fetching department purchased summary"
       fileNameStr="department_purchased_summary"
     />
+    </>  
   );
 }

@@ -1,3 +1,18 @@
+docker rebuild code:
+    docker-compose down -v
+    docker-compose build --no-cache
+    docker-compose up
+
+docker cleanup:
+    - docker system prune -a
+    - docker system prune --volumes
+
+docker build:
+    - docker compose up --build
+
+in entrypoint.sh
+    convert the 'CRLF' to 'LF'
+
 Procedure:
     install docker on windows 86-64
 
@@ -13,5 +28,17 @@ Also make sure in the docker desktop application,
     - you should be able to see the resource tab
     - change the disk image location to a more preferred storage drive. Docker images consumes a large space
 
+within the source code on the right bottom side 
+VS Code: bottom-right corner → click CRLF → change to LF → Save.
+
 then in the source code run the code
     - docker compose up --build
+
+
+
+NOTES SHRINKING THE DATA_DRIVE:
+    - wsl --list --verbose
+    - wsl --shutdown
+    - diskpart
+    - (diskpart) select vdisk file="D:\Docker Image\DockerDesktopWSL\disk\docker_data.vhdx"
+    - compact vdisk

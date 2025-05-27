@@ -1,4 +1,3 @@
-// src/components/PersistentDrawer/DrawerMenu.js
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -16,9 +15,9 @@ export function DrawerMenu() {
     <>
       {
         menuSections.map((section, index) => (
-          <Box key={section.title}>
+          <Box key={section.title} sx={{ backgroundColor: "#f5f5f5" }}>
             <List subheader={
-              <ListItemText primary={section.title} sx={{ pl: 2, py: 1, color: 'text.secondary' }} />
+              <ListItemText primary={section.title} sx={{ pl: 2, py: 1, color: 'text.secondary', fontStyle: "italic" }} />
             }>
               {
                 section.items.map(({ label, icon, path }) => (
@@ -35,7 +34,7 @@ export function DrawerMenu() {
               }
             </List>
             {
-              index < menuSections.length - 1 
+              index < menuSections.length - 1
               && <Divider />
             }
           </Box>

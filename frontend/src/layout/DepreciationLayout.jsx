@@ -1,17 +1,6 @@
 import { useReducer, useRef, useEffect } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ErrorFetching } from '@/pages/alerts';
-// import {
-//   Table,
-//   TableContainer,
-//   Paper,
-//   TablePagination,
-//   Box,
-//   Typography,
-//   TextField,
-//   MenuItem,
-//   Button
-// } from '@mui/material';
 
 import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';

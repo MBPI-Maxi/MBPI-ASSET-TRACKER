@@ -4,15 +4,6 @@ import { DrawerMenu } from '@/components/persistentDrawer/DrawerMenu';
 import { DRAWER_WIDTH } from '@/constants/layout';
 import { Outlet } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
-// import { 
-//   Box, 
-//   CssBaseline, 
-//   Toolbar, 
-//   IconButton, 
-//   Divider, 
-//   Drawer,
-//   Link as MuiLink
-// } from '@mui/material';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
@@ -104,6 +95,7 @@ export default function Core() {
           '& .MuiDrawer-paper': {
             width: DRAWER_WIDTH,
             boxSizing: 'border-box',
+            backgroundColor: '#f5f5f5',
           },
         }}
         variant="persistent"

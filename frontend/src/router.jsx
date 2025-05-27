@@ -27,7 +27,7 @@ import { QRCodeProvider } from "./context/QRCodeContext";
 
 const router = createBrowserRouter([
   {
-    element: <AuthLayout />, // ✅ AuthProvider wraps everything here
+    element: <AuthLayout />,
     errorElement: <ErrorPage />,
     children: [
       {

@@ -16,7 +16,7 @@ import {
 }
   from '@/constants/backendData';
 
-import { ErrorFetching } from '@pages/alerts';
+import { ErrorFetching, QRCodeInstruction } from '@pages/alerts';
 import { useSnackBarContext } from '@/context/SnackBarProvider';
 import { useQRCodeContext } from '@/context/QRCodeContext';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
@@ -112,6 +112,8 @@ export default function QRCode() {
 
   return (
     <Box>
+      <QRCodeInstruction />
+
       {/* Search Filters */}
       <Box
         display="flex"

@@ -174,7 +174,7 @@ export function MaintenanceReportSnackbar({ openSnackbar, hideSnackbar, msg, sev
       open={openSnackbar}
       autoHideDuration={4000}
       onClose={hideSnackbar}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
     >
       <Alert severity={severity} onClose={hideSnackbar} sx={{ width: "100%" }}>
         {msg}
@@ -182,3 +182,120 @@ export function MaintenanceReportSnackbar({ openSnackbar, hideSnackbar, msg, sev
     </Snackbar>
   )
 }
+
+export function AddAssetInstruction() {
+  return (
+    <Alert severity="info" sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        How to Use This Form:
+      </Typography>
+      <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
+        <li>Fill in the asset details including item name, department, location, amount, vendor, and dates.</li>
+        <li>Use the checkboxes to mark whether the asset is active and physically present.</li>
+        <li>Click <strong>Submit</strong> to save the asset. A success or error message will appear.</li>
+        <li>All required fields must be completed before submission.</li>
+      </ul>
+    </Alert>
+  );
+}
+
+export function UpdateAssetInstruction() {
+  return (
+    <Alert severity="info" sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        How to Update an Asset:
+      </Typography>
+      <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
+        <li>Select an asset from the dropdown list to load its details.</li>
+        <li>Modify any asset details such as name, department, location, amount, vendor, and dates.</li>
+        <li>Use the checkboxes to mark if the asset is active and physically present.</li>
+        <li>Click <strong>Update</strong> to save your changes. You will see a success or error message.</li>
+        <li>If you want to remove the asset, use the delete button below the form.</li>
+      </ul>
+    </Alert>
+  );
+}
+
+export function QRCodeInstruction() {
+  return (
+    <Alert severity="info" sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        How to Use the QR Code Search:
+      </Typography>
+      <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
+        <li>Use the filters to search assets by name, department, status, location, and purchase date.</li>
+        <li>
+          Click 
+          <strong> Search </strong> 
+          or press 
+          <em> Enter </em> 
+          in the Item Name field to apply filters.
+          </li>
+        <li>
+          Click 
+          <strong> Clear All </strong> 
+          to reset all filters and show all assets.
+        </li>
+        <li>
+          The results will show asset QR codes below with pagination controls.
+        </li>
+        <li>
+          If there is an error fetching data, an error message will appear.
+        </li>
+      </ul>
+    </Alert>
+  );
+}
+
+export function SummaryInstruction() {
+  return (
+    <Alert severity="info" sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        How to Use the Summary Report:
+      </Typography>
+      <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
+        <li>Select a <strong>Start Date</strong> and an <strong>End Date</strong> to filter the data.</li>
+        <li>The table will automatically fetch and display the results after selecting both dates.</li>
+        <li>Use the <strong>Print</strong> button to generate a printable version of the report.</li>
+        <li>You can also <strong>export</strong> the data as an Excel file using the Export button.</li>
+        <li>If there's an error fetching data, an error message will be displayed.</li>
+      </ul>
+    </Alert>
+  );
+}
+
+export function MaintenanceReportInstruction() {
+  return (
+    <Alert severity="info" sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        How to Fill Out the Maintenance Report:
+      </Typography>
+      <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
+        <li>Enter the <strong>Service Type</strong> (e.g., Repair, Inspection).</li>
+        <li>Select the relevant <strong>Asset</strong> from the dropdown or search for it by ID. Please try to enter ID number on the Box</li>
+        <li>Provide the <strong>Service Date</strong> in the required format.</li>
+        <li>Enter the <strong>Cost</strong> associated with the maintenance service.</li>
+        <li>Use the <strong>Status</strong> toggle to indicate if the service is completed.</li>
+        <li>Click <strong>Submit Report</strong> to save the entry. A success or error message will appear based on the outcome.</li>
+      </ul>
+    </Alert>
+  );
+}
+
+export function DepreciationInstruction() {
+  return (
+    <Alert severity="info" sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        How to Use the Depreciation Report:
+      </Typography>
+      <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
+        <li>Select a <strong>Depreciation Method</strong> (e.g., Straight Line, Declining Balance).</li>
+        <li>Enter the <strong>Useful Life</strong> of the asset in years.</li>
+        <li>Click <strong>Compute</strong> to generate the depreciation summary based on your selections.</li>
+        <li>Use <strong>Print</strong> or <strong>Export</strong> to download the summary.</li>
+        <li>The <strong>Total Depreciation Value</strong> is displayed below the table if available.</li>
+      </ul>
+    </Alert>
+  );
+}
+

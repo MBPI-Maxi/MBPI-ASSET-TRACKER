@@ -15,7 +15,7 @@ export const AssetScanSummary = ({
           Missing Asset: {missingAssetCount}
         </Typography>
         <Typography fontWeight={700}>
-          Total Missing Value: {addCommasToNumber(totalMissingValue)}
+          Total Missing Value: { addCommasToNumber(totalMissingValue) }
         </Typography>
       </Box>
     );
