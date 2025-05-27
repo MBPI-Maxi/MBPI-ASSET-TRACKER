@@ -7,7 +7,7 @@ import {
   ref 
 } from "yup";
 
-import { DEPARTMENT_LIST } from "@/constants/backendData";
+import { DEPARTMENT_LIST, LOCATION_LIST } from "@/constants/backendData";
 
 export const registrationSchema = object({
   first_name: string().required("First name is required"),
@@ -48,7 +48,8 @@ export const addAssetSchema = object({
     .min(ref("purchased_date"), "Warranty expiry cannot be before purchased date"),
 
   location: string()
-    .required("Location is required"),
+    .required("Location is required")
+    .oneOf(LOCATION_LIST, "Invalid Location"),
 
   vendor: string()
     .nullable(),

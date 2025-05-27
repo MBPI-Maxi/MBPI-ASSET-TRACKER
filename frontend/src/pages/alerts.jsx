@@ -8,8 +8,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+
+import { useEffect } from 'react';
 
 export function RegistrationSnackBar({ openSnackbar, hideSnackbar }) {
   return (
@@ -43,10 +44,11 @@ export function LoginSnackBar({ openSnackbar, hideSnackbar }) {
   )
 }
 
-export function AddAssetSnackBar({ openSnackbar, hideSnackbar, msg, onCloseCallback }) {
+export function AddAssetSnackBar({ openSnackbar, hideSnackbar, msg, onCloseCallback, resetMutation }) {
   const handleClose = () => {
     hideSnackbar();
     onCloseCallback();
+    resetMutation();
   }
 
   return (
@@ -56,6 +58,11 @@ export function AddAssetSnackBar({ openSnackbar, hideSnackbar, msg, onCloseCallb
       // autoHideDuration={6000}
       message={msg}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+        }
+      }}
       action={
         <Button
           color="secondary"
@@ -191,8 +198,10 @@ export function AddAssetInstruction() {
       </Typography>
       <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
         <li>Fill in the asset details including item name, department, location, amount, vendor, and dates.</li>
-        <li>Use the checkboxes to mark whether the asset is active and physically present.</li>
+        {/* <li>Use the checkboxes to mark whether the asset is active and physically present.</li> */}
+        <li>Use the checkboxes to mark if the asset is active (i.e., currently being used) and if the item is present (i.e., not missing).</li>
         <li>Click <strong>Submit</strong> to save the asset. A success or error message will appear.</li>
+        <li>If the warranty date is not applicable, please enter the same date as the purchase date. Please don't forget to indicate that in the Remarks section. 😊</li>
         <li>All required fields must be completed before submission.</li>
       </ul>
     </Alert>
@@ -225,15 +234,15 @@ export function QRCodeInstruction() {
       <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
         <li>Use the filters to search assets by name, department, status, location, and purchase date.</li>
         <li>
-          Click 
-          <strong> Search </strong> 
-          or press 
-          <em> Enter </em> 
+          Click
+          <strong> Search </strong>
+          or press
+          <em> Enter </em>
           in the Item Name field to apply filters.
-          </li>
+        </li>
         <li>
-          Click 
-          <strong> Clear All </strong> 
+          Click
+          <strong> Clear All </strong>
           to reset all filters and show all assets.
         </li>
         <li>

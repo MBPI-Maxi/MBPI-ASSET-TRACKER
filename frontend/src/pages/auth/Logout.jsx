@@ -1,6 +1,6 @@
 import API_ROUTES from "@/api/api";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuthContext } from "@/context/AuthProvider";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
@@ -9,32 +9,38 @@ function Logout() {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuthContext();
   const [open, setOpen] = useState(false);
+  const hasLoggedOut = useRef(false);
 
   useEffect(() => {
     let timeoutId;
 
-    async function doLogout() {
-      try {
-        await API_ROUTES.postLogout();  // Call backend to clear cookie/session
-      } catch (error) {
-        console.error("Logout API error:", error);
+    if (!hasLoggedOut.current) {
+      hasLoggedOut.current = true;
 
-      } finally {
-        // Clear auth state in frontend no matter what
-        setIsAuthenticated(false);
+      async function doLogout() {
+        try {
+          await API_ROUTES.postLogout();  // Call backend to clear cookie/session
+        } catch (error) {
+          console.error("Logout API error:", error);
 
-        setOpen(true);
+        } finally {
+          // Clear auth state in frontend no matter what
+          setIsAuthenticated(false);
 
-        timeoutId = setTimeout(() => {
-          setOpen(false);
-          navigate("/", { replace: true });
-        }, 1500);
+          setOpen(true);
+
+          timeoutId = setTimeout(() => {
+            setOpen(false);
+            navigate("/", { replace: true });
+          }, 1500);
+        }
       }
+
+      doLogout();
     }
 
-    doLogout();
-
     return () => clearTimeout(timeoutId);
+    
   }, [setIsAuthenticated, navigate])
 
   return (

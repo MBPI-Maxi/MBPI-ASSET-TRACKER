@@ -6,7 +6,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AddAssetSnackBar, AddAssetInstruction } from '@pages/alerts';
 import { addAssetSchema } from '@pages/auth/validationSchema';
 import { useFormContext } from '@/context/FormProvider';
@@ -25,6 +25,7 @@ export default function AddAsset() {
     purchased_date: '',
     warranty_expiry: '',
     location: '',
+    // brand: '',
     is_active: true,
     is_found: true,
     remarks: '',
@@ -46,6 +47,7 @@ export default function AddAsset() {
       amount_purchased: '',
       purchased_date: '',
       warranty_expiry: '',
+      // brand: '',
       location: '',
       is_active: true,
       is_found: true,
@@ -94,6 +96,23 @@ export default function AddAsset() {
       setErrors(validationErrors);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (openSnackbar && e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    if (openSnackbar) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [openSnackbar]);
 
   return (
     <Box>
@@ -278,14 +297,16 @@ export default function AddAsset() {
           ? <AddAssetSnackBar
             openSnackbar={openSnackbar}
             hideSnackbar={hideSnackbar}
-            msg="Form submitted successfully."
+            msg="Asset submitted successfully."
             onCloseCallback={resetForm}
+            resetMutation={mutation.reset}
           />
           : <AddAssetSnackBar
             openSnackbar={openSnackbar}
             hideSnackbar={hideSnackbar}
             msg="Error submitting the form"
             onCloseCallback={resetForm}
+            resetMutation={mutation.reset}
           />
       }
     </Box>

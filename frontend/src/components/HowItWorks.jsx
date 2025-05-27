@@ -15,7 +15,7 @@ const steps = [
 
 export default function HowItWorksSteps() {
   return (
-    <Paper elevation={2} sx={{ p: 4, mt: 4, maxWidth: 600 }}>
+    <Paper elevation={3} sx={{ p: 4, mt: 4, maxWidth: 600 }}>
       <Typography variant="h5" gutterBottom>
         How the System Works
       </Typography>
