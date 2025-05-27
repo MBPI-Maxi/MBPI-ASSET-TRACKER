@@ -211,7 +211,7 @@ export const verifyAuth = async () => {
 
     return res.data.is_authenticated;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return false;
   }
 }

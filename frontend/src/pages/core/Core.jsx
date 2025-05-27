@@ -12,7 +12,6 @@ import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import Link from '@mui/material/Link';
 
-
 import { 
   Main, 
   AppBar, 
@@ -43,22 +42,23 @@ export default function Core() {
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
+            sx={{ mr: 2, ...(open && { display: "none" }) }}
           >
             <MenuIcon />
           </IconButton>
           
-          {/* <MuiLink
+          <MuiLink
             component={RouterLink}
-            to="/"
-            color='textSecondary'
+            to="/app"
+            color="inherit"
             sx={{
+              mr: 2,
               cursor: "pointer",
               fontWeight: 700
             }}
           >
-            Redirect to Home Page
-          </MuiLink> */}
+            Home
+          </MuiLink>
 
           <MuiLink
             component={RouterLink}

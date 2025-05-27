@@ -39,7 +39,10 @@ class LocationConstant(Enum):
     LOCATION = [
         "IT ROOM",
         "WAREHOUSE 1",
-        "CONFERENCE ROOM"
+        "CONFERENCE ROOM",
+        "FINANCE",
+        "LAB ROOM",
+        "PRODUCTION ROOM"
     ]
 
 class Command(BaseCommand):

@@ -191,8 +191,10 @@ export function AddAssetInstruction() {
       </Typography>
       <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 16 }}>
         <li>Fill in the asset details including item name, department, location, amount, vendor, and dates.</li>
-        <li>Use the checkboxes to mark whether the asset is active and physically present.</li>
+        {/* <li>Use the checkboxes to mark whether the asset is active and physically present.</li> */}
+        <li>Use the checkboxes to mark if the asset is active (i.e., currently being used) and if the item is present (i.e., not missing).</li>
         <li>Click <strong>Submit</strong> to save the asset. A success or error message will appear.</li>
+        <li>If the warranty date is not applicable, please enter the same date as the purchase date.</li>
         <li>All required fields must be completed before submission.</li>
       </ul>
     </Alert>

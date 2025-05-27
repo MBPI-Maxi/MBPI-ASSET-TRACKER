@@ -7,6 +7,9 @@ docker cleanup:
     - docker system prune -a
     - docker system prune --volumes
 
+docker oneliner to build both backend and frontend again
+    - docker-compose up -d --build
+
 docker build:
     - docker compose up --build
 
