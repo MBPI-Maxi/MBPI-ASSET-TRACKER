@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
-  FormHelperText, 
-  Alert 
-} from '@mui/material';
+import React, { useState } from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import Alert from '@mui/material/Alert';
+
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from '@mui/material/InputAdornment';
+import API_ROUTES from '@/api/api';
+import formValidation from "@pages/validate";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+// import { IconButton, InputAdornment } from "@mui/material";
 import { registrationSchema } from './validationSchema';
 import { DefaultTextFieldStyle } from '@/components/TextFieldForm';
 import { useNavigate } from 'react-router-dom';
@@ -17,10 +23,10 @@ import { RegistrationSnackBar } from '../alerts';
 import { useFormContext } from '@/context/FormProvider';
 import { DEPARTMENT_LIST } from '@/constants/backendData';
 import { useMutation } from '@tanstack/react-query';
-import API_ROUTES from '@/api/api';
-import formValidation from "@pages/validate";
 
-const Registration = () => {
+
+
+const Registration = ({ closeDialog }) => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -34,7 +40,9 @@ const Registration = () => {
   });
 
   const [serverError, setServerError] = useState({});
-  
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const {
     openSnackbar, 
     showSnackbar, 
@@ -46,6 +54,14 @@ const Registration = () => {
   const mutation = useMutation({
     mutationFn: (data) => API_ROUTES.postCreateUser(data)
   })
+
+  const handleClickShowPassword = () => {
+    setShowPassword(prev => !prev);
+  };
+
+  const handleShowConfirmPassword = () => {
+    setShowConfirmPassword(prev => !prev);
+  }
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -63,18 +79,15 @@ const Registration = () => {
       setErrors({});
 
       mutation.mutate(formData, {
-        onSuccess: (responseData) => {
-          const { tokens, data } = responseData
-
-          localStorage.setItem("user", JSON.stringify(data));
-          localStorage.setItem("access_token", tokens.access);
-          localStorage.setItem("refresh_token", tokens.refresh);
-
+        onSuccess: () => {
           showSnackbar();
           setServerError({});
 
           setTimeout(() => {
-            navigate("/app");
+            hideSnackbar();
+            closeDialog();
+
+            navigate("/");
           }, 2000);
         },
         onError: (error) => {
@@ -179,21 +192,51 @@ const Registration = () => {
         <DefaultTextFieldStyle
           label="Password"
           name="password"
-          type="password"
+          type={ showPassword ? "text": "password" }
           value={formData.password}
           onChange={handleChange}
           error={Boolean(errors.password)}
           helperText={errors.password}
           required
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment>
+                  <IconButton
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                    aria-label="toggle password visibility"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
+          }}
         />
         <DefaultTextFieldStyle
           label="Confirm Password"
           name="confirmPassword"
-          type="password"
+          type={ showConfirmPassword ? "text": "password" }
           value={formData.confirmPassword}
           onChange={handleChange}
           error={Boolean(errors.confirmPassword)}
           helperText={errors.confirmPassword}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment>
+                  <IconButton
+                    onClick={handleShowConfirmPassword}
+                    edge="end"
+                    aria-label="toggle password visibility"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
+          }}
         />
 
         <Button

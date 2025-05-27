@@ -37,6 +37,9 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
+# SECURE TO TRUE IN PRODUCTION
+SECURE_COOKIE = env("SECURE_COOKIE")
+
 LOCAL_SERVER = env("LOCAL_SERVER")
 
 ALLOWED_HOSTS = []
@@ -48,6 +51,13 @@ CACHES = {
         "LOCATION": "unique-snowflake",  # just a unique name for local memory cache
     }
 }
+
+### defined CONSTANTS
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173"
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # MEDIA FILES HERE
 MEDIA_URL = "/media/"
@@ -85,19 +95,23 @@ MIDDLEWARE = [
 ROOT_URLCONF = "backend.urls"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ],
+    # "DEFAULT_AUTHENTICATION_CLASSES": [
+    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
+    # ],
     # "DEFAULT_FILTER_BACKENDS": [
     #     "django_filters.rest_framework.DjangoFilterBackend"
     # ]
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "application.api.CookiesJWTAuthentication.CookiesJWTAuthentication"
+    ]
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     # "ROTATE_REFRESH_TOKENS": True
+    # "BLACKLIST_AFTER_ROTATION": True
 }
 
 TEMPLATES = [
@@ -204,10 +218,3 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
-### defined CONSTANTS
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
-]
-
-CORS_ALLOW_CREDENTIALS = True

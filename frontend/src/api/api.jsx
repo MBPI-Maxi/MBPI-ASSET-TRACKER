@@ -7,72 +7,36 @@ const AUTH_URL = import.meta.env.VITE_BACKEND_AUTH_URL;
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const refreshTokenApiClient = axios.create({
-  baseURL: BASE_URL
+  baseURL: BASE_URL,
+  withCredentials: true
 })
 
 const assetApiClient = axios.create({
   baseURL: ASSET_URL,
+  withCredentials: true
 });
 
 const summaryApiClient = axios.create({
   baseURL: SUMMARY_URL,
+  withCredentials: true
 });
 
 const authApiClient = axios.create({
   baseURL: AUTH_URL,
+  withCredentials: true
 });
-
-// Request interceptor to add Authorization header for asset and summary clients
-function addAuthHeader(config) {
-  const accessToken = localStorage.getItem("access_token");
-
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-
-  return config;
-}
 
 // Async refresh token logic for axios-auth-refresh
 async function refreshAuthLogic(failedRequest) {
-  const refreshToken = localStorage.getItem("refresh_token");
-  
-  if (!refreshToken) {
-    // No refresh token - can't refresh, reject promise to propagate error
-    return Promise.reject(failedRequest);
-  }
-
   try {
-    const response = await refreshTokenApiClient.post("/api/token/refresh", {
-      refresh: refreshToken
-    });
-
-    const { access } = response.data;
-
-    localStorage.setItem("access_token", access);
-
-    if (response.data.refresh) {
-      localStorage.setItem("refresh_token", response.data.refresh);
-    }
-
-    failedRequest.response.config.headers["Authorization"] = `Bearer ${access}`;
+    await refreshTokenApiClient.post("/api/token/refresh"); // No body needed
 
     return Promise.resolve();
-    
   } catch (error) {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-
+    
     return Promise.reject(error);
   }
 }
-assetApiClient.interceptors.request.use(addAuthHeader);
-summaryApiClient.interceptors.request.use(addAuthHeader);
-
-// Refresh token logic with axios-auth-refresh on asset and summary clients
-createAuthRefreshInterceptor(assetApiClient, refreshAuthLogic);
-createAuthRefreshInterceptor(summaryApiClient, refreshAuthLogic);
-
 
 // fetch all the asset data
 async function fetchAssets({ page, pageSize, ...filters }) {
@@ -88,8 +52,6 @@ async function fetchAssets({ page, pageSize, ...filters }) {
     }
   });
 
-  // const api = `${ASSET_URL}/list?${params.toString()}`;
-  // const res = await axios.get(api);
   const res = await assetApiClient.get("/list", {params});
 
   return res.data;
@@ -171,6 +133,20 @@ export const loginUser = async (bodyData) => {
   }
 }
 
+export const logoutUser = async () => {
+  try {
+    const res = await authApiClient.post("/logout");
+
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+
+    throw new Error("Unexpected error has occured.");
+  }
+}
+
 export const createMaintenanceReport = async (bodyData) => {
   try {
     const res = await summaryApiClient.post("/maintenance-report", bodyData);
@@ -185,13 +161,78 @@ export const createMaintenanceReport = async (bodyData) => {
   }
 }
 
+export const createAsset = async (bodyData) => {
+  try {
+    const res = await assetApiClient.post("", bodyData);
+
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+
+    throw new Error("Unexpected error has occured.");
+  }
+}
+
+export const updateAsset = async (assetId, bodyData) => {
+  try {
+    const res = await assetApiClient.put(`/id/${assetId}`, bodyData);
+
+    return res.data;
+
+  } catch (error) {
+
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+
+    throw new Error("Unexpected error has occured.");
+  }
+}
+
+export const delAsset = async (assetId) => {
+  try {
+    const res = await assetApiClient.delete(`/id/${assetId}`);
+
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+
+    throw new Error("Unexpected error has occured.");
+  }
+}
+
+export const verifyAuth = async () => {
+  try{
+    const res = await authApiClient.post("/verify");
+
+    return res.data.is_authenticated;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+// Refresh token logic with axios-auth-refresh on asset and summary clients
+createAuthRefreshInterceptor(assetApiClient, refreshAuthLogic);
+createAuthRefreshInterceptor(summaryApiClient, refreshAuthLogic);
+createAuthRefreshInterceptor(authApiClient, refreshAuthLogic);
+
 const API_ROUTES = {
   getAllAssets: fetchAssets,
   getSummaries: fetchSummaries,
   getDepreciation: fetchDepreciation,
   postCreateUser: createUser,
   postLogin: loginUser,
-  postMaintenanceAsset: createMaintenanceReport
+  postMaintenanceAsset: createMaintenanceReport,
+  postIsAuthenticated: verifyAuth,
+  postLogout: logoutUser,
+  postAsset: createAsset,
+  putAsset: updateAsset,
+  deleteAsset: delAsset,
 }
 
 export default API_ROUTES;

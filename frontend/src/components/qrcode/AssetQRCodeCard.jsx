@@ -179,11 +179,19 @@ const RenderAssetInModal = forwardRef(({ data }, ref) => {
     generated_by,
     updated_by,
     created_at,
-    updated_at
+    updated_at,
+    qr_code_image
   } = data;
 
   return (
     <Box ref={ref} display="flex" flexDirection="column" gap={1} className="print-area">
+      <Box
+        component="img"
+        src={qr_code_image}
+        alt={`QR for ${item_name}`}
+        sx={{ width: "100%", maxWidth: "100%", height: "auto", mb: 2 }}
+      />
+
       <Typography variant="h6">{item_name}</Typography>
       <Typography variant="body2">Asset ID: {asset_id}</Typography>
       <Typography variant="body2">Brand: {brand}</Typography>

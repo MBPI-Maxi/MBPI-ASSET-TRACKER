@@ -26,12 +26,12 @@ class RegistrationAV(APIView):
             
             # you need to do this on manual way 
             user = serializer.save()
-            tokens = get_tokens_for_user(user)
+            # tokens = get_tokens_for_user(user)
             
             return Response({
                 "msg": "Registration successful.",
                 "data": serializer.data,
-                "tokens": tokens
+                # "tokens": tokens
             }, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -9,7 +9,7 @@ const SnackbarContext = createContext();
 
 export const useSnackBarContext = () => useContext(SnackbarContext);
 
-export function SnackbarProvier({ children }) {
+export function SnackbarProvider({ children }) {
   const [ openSnackbar, setOpenSnackbar ] = useState(false);
   const showSnackbar = () => setOpenSnackbar(true);
   const hideSnackbar = () => setOpenSnackbar(false);

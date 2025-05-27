@@ -1,5 +1,9 @@
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { Box, Typography, Button, CssBaseline } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+
 import { useNavigate } from 'react-router-dom';
 
 const errorTheme = createTheme({

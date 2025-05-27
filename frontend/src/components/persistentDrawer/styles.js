@@ -1,4 +1,3 @@
-// src/components/PersistentDrawer/styles.js
 import { styled } from '@mui/material/styles';
 import MuiAppBar from '@mui/material/AppBar';
 import { DRAWER_WIDTH } from '@/constants/layout';

@@ -1,25 +1,27 @@
 import { useReducer, useEffect, useRef, memo } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ErrorFetching } from '@/pages/alerts';
-import {
-  Table,
-  TableContainer,
-  Paper,
-  TablePagination,
-  Box,
-  Typography,
-} from '@mui/material';
 
-import {
-  LocalizationProvider,
-  DatePicker
-} from '@mui/x-date-pickers';
+import Table from '@mui/material/Table';
+import TableContainer from '@mui/material/TableContainer';
+import Paper from '@mui/material/Paper';
+import TablePagination from '@mui/material/TablePagination';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+
+// import {
+//   LocalizationProvider,
+//   DatePicker
+// } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { RenderLoadingScreenTable } from '@pages/Skeleton';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useSnackBarContext } from '@/context/SnackBarProvider';
 import { useReactToPrint } from 'react-to-print';
-import { PrintButton, ExportToExcel, AssetScanSummary } from '@/components/summaryTable/customButtonHelpers';
+import { PrintButton, ExportToExcel } from '@/components/summaryTable/customButtonHelpers';
+import { AssetScanSummary, MaintenanceScanReport } from '@/components/summaryTable/SummaryHelpers';
 import TableSummary from '@/components/summaryTable/TableSummary';
 
 function reducer(state, action) {
@@ -181,6 +183,17 @@ function SummaryLayout({
                       nameSummaryReport={nameSummaryReport}
                       missingAssetCount={data.missing_assets}
                       totalMissingValue={data.total_missing_value}
+                    />
+                  )
+                }
+
+                {/* render here if nameSummaryReport is Maintenance report */}
+                {
+                  nameSummaryReport === "maintenance-report-summary" &&
+                  data?.total_maintenance_cost !== undefined && (
+                    <MaintenanceScanReport 
+                      nameSummaryReport="maintenance-report-summary"
+                      totalMaintenanceValue={data.total_maintenance_cost}
                     />
                   )
                 }

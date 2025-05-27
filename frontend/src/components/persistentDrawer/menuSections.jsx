@@ -4,6 +4,7 @@ import QrCodeIcon from '@mui/icons-material/QrCode';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import TrendingDown  from '@mui/icons-material/TrendingDown';
 import BuildIcon from '@mui/icons-material/Build';
+import SearchIcon from '@mui/icons-material/Search';
 
 const menuSections = [
   {
@@ -37,7 +38,8 @@ const menuSections = [
   {
     title: 'Maintenance',
     items: [
-      { label: 'Add item', icon: <BuildIcon />, path: 'summary/maintenance/add' }
+      { label: 'Add item', icon: <BuildIcon />, path: 'summary/maintenance/add' },
+      { label: 'View Report', icon: <SearchIcon />, path: 'summary/maintenance/list'  }
     ]
   }
 ];

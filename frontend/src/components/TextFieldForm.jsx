@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 
 export function DefaultTextFieldStyle({ ...props }) {
   return (
@@ -7,7 +7,6 @@ export function DefaultTextFieldStyle({ ...props }) {
       margin="normal"
       {...props}
     >
-
     </TextField>
   )
 }

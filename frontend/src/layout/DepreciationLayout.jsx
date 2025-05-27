@@ -1,17 +1,17 @@
 import { useReducer, useRef, useEffect } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ErrorFetching } from '@/pages/alerts';
-import {
-  Table,
-  TableContainer,
-  Paper,
-  TablePagination,
-  Box,
-  Typography,
-  TextField,
-  MenuItem,
-  Button
-} from '@mui/material';
+
+import Table from '@mui/material/Table';
+import TableContainer from '@mui/material/TableContainer';
+import Paper from '@mui/material/Paper';
+import TablePagination from '@mui/material/TablePagination';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+
 
 import { useSnackBarContext } from '@/context/SnackBarProvider';
 import { useReactToPrint } from 'react-to-print';

@@ -1,23 +1,22 @@
 import { useEffect, useMemo } from 'react';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import TablePagination from '@mui/material/TablePagination';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+
 import {
-  Button,
-  Grid,
-  TablePagination,
-  Box,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem
-} from '@mui/material';
+  DEPARTMENT_LIST,
+  STATUS_IS_ACTIVE_LIST,
+  LOCATION_LIST
+}
+  from '@/constants/backendData';
 
-import { 
-  DEPARTMENT_LIST, 
-  STATUS_IS_ACTIVE_LIST, 
-  LOCATION_LIST } 
-from '@/constants/backendData';
-
-import { ErrorFetching } from '@pages/alerts';
+import { ErrorFetching, QRCodeInstruction } from '@pages/alerts';
 import { useSnackBarContext } from '@/context/SnackBarProvider';
 import { useQRCodeContext } from '@/context/QRCodeContext';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
@@ -54,6 +53,16 @@ export default function QRCode() {
     showSnackbar
   } = useSnackBarContext();
 
+  const handleClearFilters = () => {
+    setInputValue('');
+    setDepartment('all');
+    setIsActive('all');
+    setLocation('all');
+    setPurchasedDate('');
+    setSearchFilters({});
+    setPage(0);
+  };
+
   const memoizedFilters = useMemo(() => {
     return searchFilters;
   }, [searchFilters])
@@ -81,14 +90,14 @@ export default function QRCode() {
   };
 
   const handleSearchClick = () => {
-    setSearchFilters({
+    const filters = {
       item_name: inputValue,
-      department,
-      is_active,
-      location,
-      purchased_date,
-    });
-
+      department: department !== "all" ? department : undefined,
+      is_active: is_active !== "all" ? is_active : undefined,
+      location: location !== "all" ? location : undefined,
+      purchased_date: purchased_date || undefined,
+    };
+    setSearchFilters(filters);
     setPage(0);
   };
 
@@ -103,6 +112,8 @@ export default function QRCode() {
 
   return (
     <Box>
+      <QRCodeInstruction />
+
       {/* Search Filters */}
       <Box
         display="flex"
@@ -136,7 +147,7 @@ export default function QRCode() {
                 let key = `qrcode-${department}-${index}`;
 
                 return <MenuItem key={key} value={`${department}`}>
-                  { department }
+                  {department}
                 </MenuItem>
               })
             }
@@ -157,13 +168,13 @@ export default function QRCode() {
                 let capitalize = capitalizeFirstLetter(status);
 
                 return <MenuItem key={key} value={`${status}`}>
-                  { capitalize }
+                  {capitalize}
                 </MenuItem>
               })
             }
           </Select>
         </FormControl>
-        
+
         <FormControl fullWidth>
           <InputLabel>Location</InputLabel>
           <Select
@@ -171,13 +182,13 @@ export default function QRCode() {
             onChange={(e) => setLocation(e.target.value)}
             label="Location"
           >
-            <MenuItem value="location">Location</MenuItem>
+            <MenuItem value="all">All</MenuItem>
             {
               LOCATION_LIST.map((location, index) => {
                 let key = `qrcode-${location}-${index}`
 
                 return <MenuItem key={key} value={`${location}`}>
-                  { location }
+                  {location}
                 </MenuItem>
               })
             }
@@ -195,13 +206,20 @@ export default function QRCode() {
           }}
         />
 
-        <Box display="flex" justifyContent="flex-end">
+        <Box display="flex" flexDirection="column" justifyContent="space-between" gap={1}>
           <Button
             variant="contained"
             size="large"
             onClick={handleSearchClick}
           >
             Search
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handleClearFilters}
+          >
+            Clear All
           </Button>
         </Box>
       </Box>
@@ -229,8 +247,8 @@ export default function QRCode() {
       {/* Snackbar */}
       {
         openSnackbar &&
-        <ErrorFetching 
-          openSnackbar={openSnackbar} 
+        <ErrorFetching
+          openSnackbar={openSnackbar}
           hideSnackbar={hideSnackbar}
           msg="Error fetching the QR code in the database"
         />

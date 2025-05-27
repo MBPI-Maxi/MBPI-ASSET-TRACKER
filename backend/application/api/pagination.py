@@ -33,6 +33,21 @@ class AssetVerificationScanPagination(BasePageNumberPagination):
 class MaintenanceReportPagination(BasePageNumberPagination):
     page_size = 5
     max_page_size = 50
+    
+    def get_paginated_response(self, data):
+        total_maintenance_cost = getattr(self, "total_maintenance_cost", None)
+        
+        response_data = {
+            "count": self.page.paginator.count,
+            "next": self.get_next_link(),
+            "previous": self.get_previous_link(),
+            "results": data
+        }
+        
+        if total_maintenance_cost is not None:
+            response_data["total_maintenance_cost"] = total_maintenance_cost
+        
+        return Response(response_data)
 
 class AssetViewPagination(BasePageNumberPagination):
     page_size = 5

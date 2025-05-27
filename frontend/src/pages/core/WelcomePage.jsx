@@ -1,5 +1,9 @@
-import { Box, Typography, Paper } from "@mui/material";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+
 import InventoryIcon from '@mui/icons-material/Inventory';
+import HowItWorksSteps from '@/components/HowItWorks';
 
 export default function WelcomePage() {
   return (
@@ -27,6 +31,10 @@ export default function WelcomePage() {
             <strong> generate summaries. </strong>
         </Typography>
       </Paper>
+
+      <Box>
+        <HowItWorksSteps />
+      </Box>
     </Box>
   );
 }

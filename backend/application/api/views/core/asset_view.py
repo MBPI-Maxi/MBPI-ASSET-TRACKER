@@ -12,7 +12,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from dev.logger import log_message
 
-
 class AssetViewAv(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -78,7 +77,7 @@ class AssetViewAv(APIView):
         return Response({"msg": "Successfully deleted."}, status=status.HTTP_204_NO_CONTENT)
             
 class AssetViewListAV(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     filter_backends = [AssetCustomFilterBackend]
     
     # filter assets using query_params
