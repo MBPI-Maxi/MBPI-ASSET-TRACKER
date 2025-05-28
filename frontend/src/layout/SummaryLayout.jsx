@@ -19,23 +19,24 @@ import { useReactToPrint } from 'react-to-print';
 import { PrintButton, ExportToExcel } from '@/components/summaryTable/customButtonHelpers';
 import { AssetScanSummary, MaintenanceScanReport } from '@/components/summaryTable/SummaryHelpers';
 import TableSummary from '@/components/summaryTable/TableSummary';
+import { useFilterContext } from '@/context/FilterContext';
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "SET_PAGE":
-      return { ...state, page: action.payload };
-    case "SET_ROWS_PER_PAGE":
-      return { ...state, rowsPerPage: action.payload, page: 0 };
-    case "SET_START_DATE":
-      return { ...state, startDate: action.payload };
-    case "SET_END_DATE":
-      return { ...state, endDate: action.payload };
-    case "TRIGGER_FETCH":
-      return { ...state, triggerFetch: state.triggerFetch + 1, page: 0 };
-    default:
-      return state;
-  }
-}
+// function reducer(state, action) {
+//   switch (action.type) {
+//     case "SET_PAGE":
+//       return { ...state, page: action.payload };
+//     case "SET_ROWS_PER_PAGE":
+//       return { ...state, rowsPerPage: action.payload, page: 0 };
+//     case "SET_START_DATE":
+//       return { ...state, startDate: action.payload };
+//     case "SET_END_DATE":
+//       return { ...state, endDate: action.payload };
+//     case "TRIGGER_FETCH":
+//       return { ...state, triggerFetch: state.triggerFetch + 1, page: 0 };
+//     default:
+//       return state;
+//   }
+// }
 
 function SummaryLayout({
   title,
@@ -47,13 +48,7 @@ function SummaryLayout({
   fileNameStr,
 }) {
   const componentRef = useRef();
-  const [state, dispatch] = useReducer(reducer, {
-    page: 0,
-    rowsPerPage: 5,
-    startDate: null,
-    endDate: null,
-    triggerFetch: 0,
-  });
+  const { state, dispatch } = useFilterContext();
 
   const {
     openSnackbar,
@@ -63,7 +58,7 @@ function SummaryLayout({
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [
-      "departmentSummary",
+      queryKeyString,
       state.page,
       state.rowsPerPage,
       state.startDate,
@@ -85,7 +80,8 @@ function SummaryLayout({
       });
     },
     placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 1000 * 60 * 10,
+    cacheTime: 1000 * 60 * 30,
     retry: 2,
     enabled: !!state.startDate && !!state.endDate, // don't fetch if startdate and enddate is null
   })

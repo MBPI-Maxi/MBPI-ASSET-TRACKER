@@ -1,6 +1,7 @@
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import EditIcon from '@mui/icons-material/Edit';
 import QrCodeIcon from '@mui/icons-material/QrCode';
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import TrendingDown  from '@mui/icons-material/TrendingDown';
 import BuildIcon from '@mui/icons-material/Build';
@@ -18,6 +19,7 @@ const menuSections = [
     title: 'QRCode',
     items: [
       { label: 'View QR Code', icon: <QrCodeIcon />, path: 'qrcode/view' },
+      { label: 'Scan QR Code', icon: <QrCodeScannerIcon />, path: 'qrcode/scan' }
     ],
   },
   {

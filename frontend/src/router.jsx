@@ -20,10 +20,12 @@ import MaintenanceReport from "./pages/core/MaintenanceReport";
 import MaintenanceReportTable from "./pages/summary/MaintenanceReportTable";
 import Logout from "./pages/auth/Logout";
 import ProfilePage from "./pages/user/Profile";
+import QRCodeScanner from "./pages/core/QRCodeScanner";
 
 // provider
 import { SnackbarProvider } from "./context/SnackBarProvider";
 import { QRCodeProvider } from "./context/QRCodeContext";
+import { FilterProvider } from "./context/FilterContext";
 
 const router = createBrowserRouter([
   {
@@ -39,7 +41,9 @@ const router = createBrowserRouter([
         path: "/app",
         element: (
           <ProtectedRoute>
-            <App />
+            <FilterProvider>
+              <App />
+            </FilterProvider>
           </ProtectedRoute>
         ),
         children: [
@@ -68,6 +72,10 @@ const router = createBrowserRouter([
                 </QRCodeProvider>
               </SnackbarProvider>
             )
+          },
+          {
+            path: "qrcode/scan",
+            element: <QRCodeScanner />
           },
           {
             path: "summary/department-purchased",

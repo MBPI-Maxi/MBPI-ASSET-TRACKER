@@ -268,6 +268,9 @@ export function SummaryInstruction() {
         <li>Use the <strong>Print</strong> button to generate a printable version of the report.</li>
         <li>You can also <strong>export</strong> the data as an Excel file using the Export button.</li>
         <li>If there's an error fetching data, an error message will be displayed.</li>
+        <li>
+          <strong>Note:</strong> If you add data today (e.g., <em>2025-05-28</em> ), it will only appear in the summary if your selected <strong>End Date</strong> is the next day or later (e.g., <em>2025-05-29</em>).
+        </li>
       </ul>
     </Alert>
   );
