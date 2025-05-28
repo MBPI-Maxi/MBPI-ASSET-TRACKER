@@ -35,7 +35,7 @@ class CustomLoginTokenObtainPairView(TokenObtainPairView):
             secure=settings.SECURE_COOKIE,  # Set to True in production with HTTPS
             samesite="Lax",
             # max_age=max_age,
-            max_age=86400,
+            max_age=86400, # 1 day
             path="/"
         )
         response.set_cookie(
