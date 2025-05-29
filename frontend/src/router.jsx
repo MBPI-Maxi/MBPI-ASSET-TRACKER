@@ -75,7 +75,11 @@ const router = createBrowserRouter([
           },
           {
             path: "qrcode/scan",
-            element: <QRCodeScanner />
+            element: (
+              <SnackbarProvider>
+                <QRCodeScanner />
+              </SnackbarProvider>
+            )
           },
           {
             path: "summary/department-purchased",

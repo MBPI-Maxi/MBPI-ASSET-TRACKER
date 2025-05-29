@@ -10,8 +10,6 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
-import { useEffect } from 'react';
-
 export function RegistrationSnackBar({ openSnackbar, hideSnackbar }) {
   return (
     <Snackbar
@@ -311,3 +309,17 @@ export function DepreciationInstruction() {
   );
 }
 
+export function QRCodeScannerSnackBar({ openSnackbar, hideSnackbar, msg }) {
+  return (
+    <Snackbar
+      open={openSnackbar}
+      autoHideDuration={4000}
+      onClose={hideSnackbar}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+    >
+      <Alert security="error">
+        {msg}
+      </Alert>
+    </Snackbar>
+  );
+}
