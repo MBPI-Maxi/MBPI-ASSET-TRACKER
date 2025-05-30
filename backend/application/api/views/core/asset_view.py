@@ -12,7 +12,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from dev.logger import log_message
 
-
 class AssetViewAv(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -118,23 +117,7 @@ class AssetViewListAV(APIView):
             "item_name_pii", 
             "location"
         ).all().order_by("asset_id")
-        
-        # filters
-        # if department_name:
-        #     # Apply filters cumulatively
-        #     assets = assets.filter(department_pii__department__iexact=department_name)
-        # if item_name:
-        #     assets = assets.filter(item_name_pii__item_name__iexact=item_name)
-        # if is_active == "active":
-        #     assets = assets.filter(is_active=True)
-        # if is_active == "retired":
-        #     assets = assets.filter(is_active=False)
-        # if location:
-        #     exact_word = location.strip()
-        #     assets = assets.filter(location__name__iexact=exact_word)
-        # if purchased_date:
-        #     assets = assets.filter(purchased_date=purchased_date)
-        
+                
         # filter the queryset
         assets = self.filter_by_query_params(
             request=request,

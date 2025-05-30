@@ -20,16 +20,20 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import (
-    TokenRefreshView,
+    # TokenRefreshView,
     TokenVerifyView
 )
 # from backend.custom import CustomTokenObtainPairView # updates the last_login in the Employee Table
 
+# change how the refresh token is being handled by using the cookie of django
+from application.api.CookieRefreshTokenApi import CookieRefreshTokenApi
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("application.api.views.core.urls", namespace="asset_np")),
-    path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'), # token refresh
-    path('api/token/verify', TokenVerifyView.as_view(), name='token_verify'), # token verify
+    # path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'), # token refresh
+    path("api/token/refresh", CookieRefreshTokenApi.as_view(), name="token_refresh"),
+    path("api/token/verify", TokenVerifyView.as_view(), name="token_verify"), # token verify
     path("summary/", include("application.api.views.summary.urls", namespace="summary_np")),
     path("account/", include("application.api.views.auth.urls", namespace="registration_np")),
     path("profile/", include("application.api.views.users.urls", namespace="users_np"))

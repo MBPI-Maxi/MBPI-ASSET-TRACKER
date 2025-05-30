@@ -1,16 +1,23 @@
-import {
-  Box, Button, TextField, Checkbox, FormControlLabel,
-  MenuItem, Typography,
-  InputLabel
-} from '@mui/material';
-import { useState } from 'react';
-import { AddAssetSnackBar } from '@pages/alerts';
-import formValidation from '@pages/validate';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+
+import { useState, useEffect } from 'react';
+import { AddAssetSnackBar, AddAssetInstruction } from '@pages/alerts';
 import { addAssetSchema } from '@pages/auth/validationSchema';
 import { useFormContext } from '@/context/FormProvider';
+import { DEPARTMENT_LIST, LOCATION_LIST } from '@/constants/backendData';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import API_ROUTES from '@/api/api';
+import formValidation from '@pages/validate';
 
 export default function AddAsset() {
-
+  const queryClient = useQueryClient();
+  const [formDisabled, setFormDisabled] = useState(false);
   const [form, setForm] = useState({
     item_name: '',
     department: '',
@@ -18,6 +25,7 @@ export default function AddAsset() {
     purchased_date: '',
     warranty_expiry: '',
     location: '',
+    // brand: '',
     is_active: true,
     is_found: true,
     remarks: '',
@@ -30,20 +38,29 @@ export default function AddAsset() {
     hideSnackbar,
     errors,
     setErrors
-  } = useFormContext()
+  } = useFormContext();
 
-  // Dummy dropdown options
-  const departments = [
-    { id: 1, name: 'IT' },
-    { id: 2, name: 'HR' },
-    { id: 3, name: 'Finance' },
-  ];
+  const resetForm = () => {
+    setForm({
+      item_name: '',
+      department: '',
+      amount_purchased: '',
+      purchased_date: '',
+      warranty_expiry: '',
+      // brand: '',
+      location: '',
+      is_active: true,
+      is_found: true,
+      remarks: '',
+      vendor: ''
+    });
 
-  const locations = [
-    { id: 1, name: 'IT ROOM' },
-    { id: 2, name: 'STOCK ROOM' },
-    { id: 3, name: 'MEETING ROOM' },
-  ];
+    setFormDisabled(false);
+  };
+
+  const mutation = useMutation({
+    mutationFn: (data) => API_ROUTES.postAsset(data)
+  })
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -60,16 +77,46 @@ export default function AddAsset() {
 
     if (Object.keys(validationErrors).length === 0) {
       setErrors({});
+      setFormDisabled(true);
 
-      console.log("Form submitted successful");
-      showSnackbar();
+      mutation.mutate(form, {
+        onSuccess: () => {
+          showSnackbar();
+          console.log("Success submitting the form");
+        },
+        onError: (error) => {
+          showSnackbar();
+          console.error("Error in the asset addition", error);
+        },
+        onSettled: () => {
+          queryClient.invalidateQueries(["allAssetsForUpdate"]);
+        }
+      });
     } else {
       setErrors(validationErrors);
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (openSnackbar && e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    if (openSnackbar) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [openSnackbar]);
+
   return (
     <Box>
+      <AddAssetInstruction />
       <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 1000, mx: 'auto', p: 2 }}>
         <Typography variant="h5" gutterBottom>Add Asset</Typography>
 
@@ -87,6 +134,7 @@ export default function AddAsset() {
               autoFocus
               error={Boolean(errors.item_name)}
               helperText={errors.item_name || " "}
+              disabled={formDisabled}
             />
 
             <TextField
@@ -100,10 +148,17 @@ export default function AddAsset() {
               required
               error={Boolean(errors.department)}
               helperText={errors.department || " "}
+              disabled={formDisabled}
             >
-              {departments.map(dept => (
-                <MenuItem key={dept.id} value={dept.id}>{dept.name}</MenuItem>
-              ))}
+              {
+                DEPARTMENT_LIST.map((dept, index) => {
+                  let key = `asset-${dept}-${index}`;
+
+                  return <MenuItem key={key} value={dept}>
+                    {dept}
+                  </MenuItem>
+                })
+              }
             </TextField>
 
             <TextField
@@ -117,10 +172,17 @@ export default function AddAsset() {
               required
               error={Boolean(errors.location)}
               helperText={errors.location || " "}
+              disabled={formDisabled}
             >
-              {locations.map(loc => (
-                <MenuItem key={loc.id} value={loc.id}>{loc.name}</MenuItem>
-              ))}
+              {
+                LOCATION_LIST.map((location, index) => {
+                  let key = `asset-${location}-${index}`;
+
+                  return <MenuItem key={key} value={location}>
+                    {location}
+                  </MenuItem>
+                })
+              }
             </TextField>
 
             <TextField
@@ -132,6 +194,7 @@ export default function AddAsset() {
               type="number"
               margin="normal"
               helperText={errors.amount_purchased || " "}
+              disabled={formDisabled}
             />
           </Box>
 
@@ -147,8 +210,9 @@ export default function AddAsset() {
               margin="normal"
               error={Boolean(errors.purchased_date)}
               helperText={errors.purchased_date || " "}
-              slotProps={{ 
-                inputLabel: { shrink: true } 
+              disabled={formDisabled}
+              slotProps={{
+                inputLabel: { shrink: true }
               }}
             />
 
@@ -162,8 +226,9 @@ export default function AddAsset() {
               margin="normal"
               error={Boolean(errors.warranty_expiry)}
               helperText={errors.warranty_expiry || " "}
-              slotProps={{ 
-                inputLabel: { shrink: true } 
+              disabled={formDisabled}
+              slotProps={{
+                inputLabel: { shrink: true }
               }}
             />
 
@@ -175,6 +240,7 @@ export default function AddAsset() {
               onChange={handleChange}
               margin="normal"
               helperText={errors.vendor || " "}
+              disabled={formDisabled}
             />
 
             <TextField
@@ -185,6 +251,7 @@ export default function AddAsset() {
               onChange={handleChange}
               margin="normal"
               helperText={errors.remarks || " "}
+              disabled={formDisabled}
             />
           </Box>
         </Box>
@@ -196,6 +263,7 @@ export default function AddAsset() {
                 name="is_active"
                 checked={form.is_active}
                 onChange={handleChange}
+                disabled={formDisabled}
               />
             }
             label="Active Item?"
@@ -206,6 +274,7 @@ export default function AddAsset() {
                 name="is_found"
                 checked={form.is_found}
                 onChange={handleChange}
+                disabled={formDisabled}
               />
             }
             label="Item is present?"
@@ -224,8 +293,21 @@ export default function AddAsset() {
 
       {/* Snack bar here */}
       {
-        openSnackbar &&
-        <AddAssetSnackBar openSnackbar={openSnackbar} hideSnackbar={hideSnackbar} />
+        openSnackbar && mutation.isSuccess
+          ? <AddAssetSnackBar
+            openSnackbar={openSnackbar}
+            hideSnackbar={hideSnackbar}
+            msg="Asset submitted successfully."
+            onCloseCallback={resetForm}
+            resetMutation={mutation.reset}
+          />
+          : <AddAssetSnackBar
+            openSnackbar={openSnackbar}
+            hideSnackbar={hideSnackbar}
+            msg="Error submitting the form"
+            onCloseCallback={resetForm}
+            resetMutation={mutation.reset}
+          />
       }
     </Box>
   );

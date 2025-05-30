@@ -370,14 +370,15 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         
         # Update last_login manually
         self.user.last_login = now()
-        self.user.save(update_fields=['last_login'])
+        self.user.save(update_fields=["last_login"])
         
         # modify the response to include the current user details
         data["user_details"] = {
             "user_id": self.user.id,
             "first_name": self.user.first_name,
             "last_name": self.user.last_name,
-            "email": self.user.email
+            "email": self.user.email,
+            "department": self.user.department.department
         }
         
         return data
@@ -410,6 +411,11 @@ class MaintenanceReportListSerializer(serializers.ModelSerializer):
             "created_at"
         ]
         read_only_fields = ["maintenance_id", "created_at", "performed_by"]
+
+class MaitenanceReportDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AssetMaintenance
+        fields = "__all__"
 
 class MaintenanceReportSerializer(serializers.ModelSerializer):
     service_type = serializers.CharField(required=True)

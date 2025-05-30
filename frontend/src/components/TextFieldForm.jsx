@@ -1,13 +1,12 @@
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 
-export function RegistrationTextField({ ...props }) {
+export function DefaultTextFieldStyle({ ...props }) {
   return (
     <TextField
       fullWidth
       margin="normal"
       {...props}
     >
-
     </TextField>
   )
 }

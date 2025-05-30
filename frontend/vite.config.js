@@ -13,8 +13,12 @@ export default defineConfig({
       '@context': path.resolve(__dirname, './src/context'),
       '@layout': path.resolve(__dirname, './src/layout'),
       '@pages': path.resolve(__dirname, './src/pages'),
+      '@helpers': path.resolve(__dirname, './src/helpers'),
       '@provider': path.resolve(__dirname, './src/provider'),
       '@api': path.resolve(__dirname, './src/api'),
     }
+  },
+  build: {
+    sourcemap: false, // 🚫 disables source maps in production
   }
 })

@@ -11,6 +11,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all project files
 COPY . .
 
+# DEBUG THE FILE
+RUN ls -l
+
 # Make both scripts executable
 RUN chmod +x entrypoint.sh seed.sh
 

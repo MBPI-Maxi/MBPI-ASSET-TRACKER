@@ -2,64 +2,141 @@ import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./pages/Error";
 import LandingPage from "./pages/LandingPage";
 
+// main
+import App from "@pages/App";
+
 // core
-import Core from "./pages/core/Core";
 import AddAsset from "./pages/core/AddAsset";
 import WelcomePage from "./pages/core/WelcomePage";
 import UpdateAsset from "./pages/core/UpdateAsset";
+import QRCode from "./pages/core/QRCode";
+import DepartmentSummaryTable from "./pages/summary/DepartmentSummaryTable";
+import AssetScanVerificationTable from "./pages/summary/AssetScanVerificationTable";
+import LabelGenerationTable from "./pages/summary/LabelGenerationTable";
+import DepreciationTable from "./pages/depreciation/DepreciationTable";
+import AuthLayout from "./layout/AuthLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import MaintenanceReport from "./pages/core/MaintenanceReport";
+import MaintenanceReportTable from "./pages/summary/MaintenanceReportTable";
+import Logout from "./pages/auth/Logout";
+import ProfilePage from "./pages/user/Profile";
+import QRCodeScanner from "./pages/core/QRCodeScanner";
 
+// provider
+import { SnackbarProvider } from "./context/SnackBarProvider";
+import { QRCodeProvider } from "./context/QRCodeContext";
+import { FilterProvider } from "./context/FilterContext";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <LandingPage />,
+    element: <AuthLayout />,
     errorElement: <ErrorPage />,
-  },
-  {
-    path: "/app",
-    element: <Core />,
     children: [
       {
-        index: true,
-        element: <WelcomePage />
+        path: "/",
+        element: <LandingPage />,
+        errorElement: <ErrorPage />,
       },
       {
-        path: "asset/add",
-        element: <AddAsset />
+        path: "/app",
+        element: (
+          <ProtectedRoute>
+            <FilterProvider>
+              <App />
+            </FilterProvider>
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <WelcomePage />
+          },
+          {
+            path: "profile",
+            element: <ProfilePage />
+          },
+          {
+            path: "asset/add",
+            element: <AddAsset />
+          },
+          {
+            path: "asset/manage",
+            element: <UpdateAsset />
+          },
+          {
+            path: "qrcode/view",
+            element: (
+              <SnackbarProvider>
+                <QRCodeProvider>
+                  <QRCode />
+                </QRCodeProvider>
+              </SnackbarProvider>
+            )
+          },
+          {
+            path: "qrcode/scan",
+            element: (
+              <SnackbarProvider>
+                <QRCodeScanner />
+              </SnackbarProvider>
+            )
+          },
+          {
+            path: "summary/department-purchased",
+            element: (
+              <SnackbarProvider>
+                <DepartmentSummaryTable />
+              </SnackbarProvider>
+            )
+          },
+          {
+            path: "summary/asset-scan-verification",
+            element: (
+              <SnackbarProvider>
+                <AssetScanVerificationTable />
+              </SnackbarProvider>
+            )
+          },
+          {
+            path: "summary/label-generation",
+            element: (
+              <SnackbarProvider>
+                <LabelGenerationTable />
+              </SnackbarProvider>
+            )
+          },
+          {
+            path: "summary/depreciation/report",
+            element: (
+              <SnackbarProvider>
+                <DepreciationTable />
+              </SnackbarProvider>
+            )
+          },
+          {
+            path: "summary/maintenance/add",
+            element: (
+              <SnackbarProvider>
+                <MaintenanceReport />
+              </SnackbarProvider>
+            )
+          },
+          {
+            path: "summary/maintenance/list",
+            element: (
+              <SnackbarProvider>
+                <MaintenanceReportTable />
+              </SnackbarProvider>
+            )
+          }
+        ]
       },
       {
-        path: "asset/update",
-        element: <UpdateAsset />
+        path: "logout",
+        element: <Logout />
       }
     ]
   }
-])
-
-
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: <Base />,
-//     errorElement: <ErrorPage />,
-//     children: [
-//       {
-//         index: true,
-//         element: <App />
-//       },
-//       {
-//         path: "/asset/add",
-//         element: <AddAsset />
-//       },
-//       {
-//         path: "/qr/codes",
-//         element: <QRPage />
-//       }
-//     ],
-//   },
-//   {
-//     path: "/error",
-//     element: <ErrorPage />
-//   }
-// ])
+]);
 
 export default router;

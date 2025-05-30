@@ -98,9 +98,9 @@ class DepreciationReportListAV(APIView):
             results.append(depreciation)
 
         # add the total depreciation value in the results
-        results.append({"total_depreciation_value": round(total_depreciation_value, 2)})
+        # results.append({"total_depreciation_value": round(total_depreciation_value, 2)})
 
-        return self.paginated_response(request, results)
+        return self.paginated_response(request, results, total_depreciation_value)
     
     def compute_depreciation(self, purchased_price, useful_life, asset_age_years, method):
         if method == "straight_line":
@@ -119,8 +119,9 @@ class DepreciationReportListAV(APIView):
             result["useful_life"] = useful_life
             return result
     
-    def paginated_response(self, request, response):
+    def paginated_response(self, request, response, total_depreciation_value):
         paginator = self.pagination_classes()
+        paginator.total_depreciation_value = round(total_depreciation_value, 2)
         paginated_data = paginator.paginate_queryset(response, request, view=self)
         
         return paginator.get_paginated_response(paginated_data)

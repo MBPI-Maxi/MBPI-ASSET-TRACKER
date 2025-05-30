@@ -128,79 +128,203 @@ def straight_line_computation(
         }
 
 def double_declining_balance(
-    purchased_price: Decimal, 
-    useful_life: int, 
+    purchased_price: Decimal,
+    useful_life: int,
     asset_age_years: Decimal
 ):
-        depreciation_rate = Decimal(2) / Decimal(useful_life)
-        current_value = purchased_price
-        depreciated_value = Decimal(0)
-        full_years = int(asset_age_years)
+    depreciation_rate = Decimal(2) / Decimal(useful_life)
+    current_value = purchased_price
+    depreciated_value = Decimal(0)
+    full_years = int(asset_age_years)
+    last_calculated_annual_depreciation = Decimal(0) # To store the annual depreciation for the current period
 
-        for year in range(full_years):
-            annual_depreciation = current_value * depreciation_rate
-            depreciated_value += annual_depreciation
-            current_value -= annual_depreciation
+    for year in range(full_years):
+        annual_depreciation = current_value * depreciation_rate
+        # Ensure depreciation doesn't reduce value below salvage (implied 0 here)
+        if current_value - annual_depreciation < 0:
+            annual_depreciation = current_value # Depreciate only down to zero
+        last_calculated_annual_depreciation = annual_depreciation
+        depreciated_value += annual_depreciation
+        current_value -= annual_depreciation
 
-        # Prorated depreciation for the fractional year
-        remaining_fraction = asset_age_years - full_years
-        if remaining_fraction > 0:
-            partial_depreciation = (current_value * depreciation_rate) * remaining_fraction
-            depreciated_value += partial_depreciation
-            current_value -= partial_depreciation
+    # Prorated depreciation for the fractional year
+    remaining_fraction = asset_age_years - full_years
+    if remaining_fraction > 0:
+        partial_depreciation = (current_value * depreciation_rate) * remaining_fraction
+        # Ensure partial depreciation doesn't reduce value below salvage
+        if current_value - partial_depreciation < 0:
+            partial_depreciation = current_value
+        last_calculated_annual_depreciation = partial_depreciation # This is the "annual" depreciation for the partial year
+        depreciated_value += partial_depreciation
+        current_value -= partial_depreciation
+    else:
+        # If no fractional year, and full_years > 0, then last_calculated_annual_depreciation
+        # already holds the value for the last full year.
+        # If asset_age_years is 0, last_calculated_annual_depreciation remains 0.
+        pass
 
-        current_depreciation_pct = (
-            depreciated_value / purchased_price * 100
-        ).quantize(
-            Decimal('0.1'), rounding=ROUND_HALF_UP
-        )
+    current_depreciation_pct = (
+        depreciated_value / purchased_price * 100
+    ).quantize(
+        Decimal('0.1'), rounding=ROUND_HALF_UP
+    )
 
-        return {
-            "original_cost": round(purchased_price, 2),
-            "asset_age_years": round(asset_age_years, 2),
-            "depreciation_rate": f"{(depreciation_rate * 100).quantize(Decimal('0.1'))}%",
-            "depreciated_value": round(depreciated_value, 2),
-            "current_depreciation_pct": f"{current_depreciation_pct}%",
-            "current_value": round(max(current_value, 0), 2),
-        }
-        
+    # Calculate annual_depreciation_pct based on the last calculated annual depreciation
+    annual_depreciation_pct = (
+        last_calculated_annual_depreciation / purchased_price * 100
+    ).quantize(
+        Decimal("0.1"),
+        rounding=ROUND_HALF_UP
+    ) if purchased_price != 0 else Decimal(0)
+
+
+    return {
+        "original_cost": round(purchased_price, 2),
+        "asset_age_years": round(asset_age_years, 2),
+        "depreciation_rate": f"{(depreciation_rate * 100).quantize(Decimal('0.1'))}%",
+        "annual_depreciation": round(last_calculated_annual_depreciation, 2), # New
+        "annual_depreciation_pct": f"{annual_depreciation_pct}%", # New
+        "depreciated_value": round(depreciated_value, 2),
+        "current_depreciation_pct": f"{current_depreciation_pct}%",
+        "current_value": round(max(current_value, 0), 2),
+    }
+
 def sum_of_years_digits(
-    purchased_price: Decimal, 
-    useful_life: int, 
+    purchased_price: Decimal,
+    useful_life: int,
     asset_age_years: Decimal
 ):
-        total_years = useful_life
-        sum_of_years = sum(range(1, total_years + 1))
-        depreciated_value = Decimal(0)
-        current_value = purchased_price
-        full_years = int(asset_age_years)
+    total_years = useful_life
+    sum_of_years = sum(range(1, total_years + 1))
+    depreciated_value = Decimal(0)
+    current_value = purchased_price
+    full_years = int(asset_age_years)
+    last_calculated_annual_depreciation = Decimal(0) # To store the annual depreciation for the current period
 
-        for year in range(1, full_years + 1):
-            year_factor = (total_years - (year - 1)) / sum_of_years
-            annual_depreciation = purchased_price * Decimal(year_factor)
-            depreciated_value += annual_depreciation
-            current_value -= annual_depreciation
+    for year in range(1, full_years + 1):
+        year_factor = (total_years - (year - 1)) / sum_of_years
+        annual_depreciation = purchased_price * Decimal(year_factor)
+        last_calculated_annual_depreciation = annual_depreciation
+        depreciated_value += annual_depreciation
+        current_value -= annual_depreciation
 
-        # Fractional year adjustment
-        remaining_fraction = asset_age_years - full_years
+    # Fractional year adjustment
+    remaining_fraction = asset_age_years - full_years
+
+    if remaining_fraction > 0 and full_years < useful_life:
+        year_factor = (total_years - full_years) / sum_of_years
+        partial_depreciation = purchased_price * Decimal(year_factor) * remaining_fraction
+        last_calculated_annual_depreciation = partial_depreciation # This is the "annual" depreciation for the partial year
+        depreciated_value += partial_depreciation
+        current_value -= partial_depreciation
+    else:
+        # If no fractional year, and full_years > 0, then last_calculated_annual_depreciation
+        # already holds the value for the last full year.
+        # If asset_age_years is 0, last_calculated_annual_depreciation remains 0.
+        pass
+
+    current_depreciation_pct = (
+        depreciated_value / purchased_price * 100
+    ).quantize(
+            Decimal('0.1'),
+            rounding=ROUND_HALF_UP
+    )
+
+    # Calculate annual_depreciation_pct based on the last calculated annual depreciation
+    annual_depreciation_pct = (
+        last_calculated_annual_depreciation / purchased_price * 100
+    ).quantize(
+        Decimal("0.1"),
+        rounding=ROUND_HALF_UP
+    ) if purchased_price != 0 else Decimal(0)
+
+
+    return {
+        "original_cost": round(purchased_price, 2),
+        "asset_age_years": round(asset_age_years, 2),
+        "annual_depreciation": round(last_calculated_annual_depreciation, 2), # New
+        "annual_depreciation_pct": f"{annual_depreciation_pct}%", # New
+        "depreciated_value": round(depreciated_value, 2),
+        "current_depreciation_pct": f"{current_depreciation_pct}%",
+        "current_value": round(max(current_value, 0), 2),
+    }
+
+### OLD COMPUTATION ###
+# def double_declining_balance(
+#     purchased_price: Decimal, 
+#     useful_life: int, 
+#     asset_age_years: Decimal
+# ):
+#         depreciation_rate = Decimal(2) / Decimal(useful_life)
+#         current_value = purchased_price
+#         depreciated_value = Decimal(0)
+#         full_years = int(asset_age_years)
+
+#         for year in range(full_years):
+#             annual_depreciation = current_value * depreciation_rate
+#             depreciated_value += annual_depreciation
+#             current_value -= annual_depreciation
+
+#         # Prorated depreciation for the fractional year
+#         remaining_fraction = asset_age_years - full_years
+#         if remaining_fraction > 0:
+#             partial_depreciation = (current_value * depreciation_rate) * remaining_fraction
+#             depreciated_value += partial_depreciation
+#             current_value -= partial_depreciation
+
+#         current_depreciation_pct = (
+#             depreciated_value / purchased_price * 100
+#         ).quantize(
+#             Decimal('0.1'), rounding=ROUND_HALF_UP
+#         )
+
+#         return {
+#             "original_cost": round(purchased_price, 2),
+#             "asset_age_years": round(asset_age_years, 2),
+#             "depreciation_rate": f"{(depreciation_rate * 100).quantize(Decimal('0.1'))}%",
+#             "depreciated_value": round(depreciated_value, 2),
+#             "current_depreciation_pct": f"{current_depreciation_pct}%",
+#             "current_value": round(max(current_value, 0), 2),
+#         }
         
-        if remaining_fraction > 0 and full_years < useful_life:
-            year_factor = (total_years - full_years) / sum_of_years
-            partial_depreciation = purchased_price * Decimal(year_factor) * remaining_fraction
-            depreciated_value += partial_depreciation
-            current_value -= partial_depreciation
+# def sum_of_years_digits(
+#     purchased_price: Decimal, 
+#     useful_life: int, 
+#     asset_age_years: Decimal
+# ):
+#         total_years = useful_life
+#         sum_of_years = sum(range(1, total_years + 1))
+#         depreciated_value = Decimal(0)
+#         current_value = purchased_price
+#         full_years = int(asset_age_years)
 
-        current_depreciation_pct = (
-            depreciated_value / purchased_price * 100
-        ).quantize(
-                Decimal('0.1'), 
-                rounding=ROUND_HALF_UP
-        )
+#         for year in range(1, full_years + 1):
+#             year_factor = (total_years - (year - 1)) / sum_of_years
+#             annual_depreciation = purchased_price * Decimal(year_factor)
+#             depreciated_value += annual_depreciation
+#             current_value -= annual_depreciation
 
-        return {
-            "original_cost": round(purchased_price, 2),
-            "asset_age_years": round(asset_age_years, 2),
-            "depreciated_value": round(depreciated_value, 2),
-            "current_depreciation_pct": f"{current_depreciation_pct}%",
-            "current_value": round(max(current_value, 0), 2),
-        }
+#         # Fractional year adjustment
+#         remaining_fraction = asset_age_years - full_years
+        
+#         if remaining_fraction > 0 and full_years < useful_life:
+#             year_factor = (total_years - full_years) / sum_of_years
+#             partial_depreciation = purchased_price * Decimal(year_factor) * remaining_fraction
+#             depreciated_value += partial_depreciation
+#             current_value -= partial_depreciation
+
+#         current_depreciation_pct = (
+#             depreciated_value / purchased_price * 100
+#         ).quantize(
+#                 Decimal('0.1'), 
+#                 rounding=ROUND_HALF_UP
+#         )
+
+#         return {
+#             "original_cost": round(purchased_price, 2),
+#             "asset_age_years": round(asset_age_years, 2),
+#             "depreciated_value": round(depreciated_value, 2),
+#             "current_depreciation_pct": f"{current_depreciation_pct}%",
+#             "current_value": round(max(current_value, 0), 2),
+#         }
+        

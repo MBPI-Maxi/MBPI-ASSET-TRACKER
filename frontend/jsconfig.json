@@ -8,6 +8,7 @@
       "@context/*": ["context/*"],
       "@layout/*": ["layout/*"],
       "@pages/*": ["pages/*"],
+      "@helpers/*": ["helpers/*"],
       "@provider/*": ["provider/*"],
       "@api/*": ["api/*"]
     }
