@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import API_ROUTES from "@/api/api";
 
 const AuthContext = createContext();
@@ -17,8 +17,6 @@ export function AuthProvider({ children }) {
         setIsAuthenticated(res); // assuming boolean response
 
       } catch (error) {
-        console.error("Auth check failed:", error);
-
         setIsAuthenticated(false);
         
         navigate("/");

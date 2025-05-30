@@ -15,16 +15,25 @@ const steps = [
 
 export default function HowItWorksSteps() {
   return (
-    <Paper elevation={3} sx={{ p: 4, mt: 4, maxWidth: 600 }}>
+    <Paper
+      elevation={3}
+      sx={{
+        p: 4,
+        mt: 4,
+        maxWidth: 600
+      }}
+    >
       <Typography variant="h5" gutterBottom>
         How the System Works
       </Typography>
       <Stepper orientation="vertical" nonLinear activeStep={-1}>
-        {steps.map((label, index) => (
-          <Step key={index}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
+        {
+          steps.map((label, index) => (
+            <Step key={index}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))
+        }
       </Stepper>
     </Paper>
   );

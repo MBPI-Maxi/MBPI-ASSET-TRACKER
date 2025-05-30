@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
+import { useSnackBarContext } from "@/context/SnackBarProvider";
+import { ErrorFetching } from "../alerts";
 import CameraSelectComponent from "@/components/qrcode/CameraSelectComponent";
 import Typography from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
@@ -9,11 +11,11 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import { useSnackBarContext } from "@/context/SnackBarProvider";
+
 
 function QRCodeScanner() {
   // const [mode, setMode] = useState("Webcam");
-  // const [data, setData] = useState("Not Found");
+  const [errorMessage, setErrorMessage] = useState(null);
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
   const [data, setData] = useState({});
   const {
@@ -38,7 +40,9 @@ function QRCodeScanner() {
 
   const handleError = (error) => {
     const message = error.message;
-    
+
+    showSnackbar();
+    setErrorMessage(message);
   } 
 
   return (
@@ -69,7 +73,7 @@ function QRCodeScanner() {
           >
             <Scanner
               onScan={handleParsing}
-              onError={(err) => console.log(err.message)}
+              onError={handleError}
               constraints={{ deviceId: selectedDeviceId }}
             />
           </Paper>
@@ -97,12 +101,22 @@ function QRCodeScanner() {
                   Scan a QR code to display asset details.
                 </Typography>
             }
-
-            <Typography variant="overline" color="text.secondary">
+            {/* <Typography variant="overline" color="text.secondary">
               You can input more information related to the scanned item here.
-            </Typography>
+            </Typography> */}
           </Paper>
         </Box>
+
+        {/* snackbar here */}
+        {
+          errorMessage && (
+            <ErrorFetching 
+              openSnackbar={openSnackbar}
+              hideSnackbar={hideSnackbar}
+              msg={errorMessage}
+            />
+          )
+        }
       </Box>
     </>
   );

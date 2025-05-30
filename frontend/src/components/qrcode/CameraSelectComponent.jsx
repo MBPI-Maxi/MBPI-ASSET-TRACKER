@@ -16,7 +16,6 @@ export default function CameraSelectComponent({ selectedDeviceId, setSelectedDev
       try {
         const allDevices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = allDevices.filter((device) => device.kind === "videoinput");
-
         setDevices(videoDevices);
 
         if (!selectedDeviceId && videoDevices.length > 0) {
@@ -36,8 +35,8 @@ export default function CameraSelectComponent({ selectedDeviceId, setSelectedDev
       <InputLabel id="camera-select-label">Select Camera</InputLabel>
 
       {
-        devices.length > 0 ? (
-          <Select
+        devices.length > 0  
+        ? <Select
             labelId="camera-select-label"
             value={selectedDeviceId || ""}
             onChange={handleChange}
@@ -51,12 +50,9 @@ export default function CameraSelectComponent({ selectedDeviceId, setSelectedDev
               ))
             }
           </Select>
-        ) : (
-          // Optional: show a disabled select while loading
-          <Select disabled value="">
+        : <Select disabled value="">
             <MenuItem value="">Loading...</MenuItem>
-          </Select>
-        )
+          </Select>          
       }
     </FormControl>
   );
