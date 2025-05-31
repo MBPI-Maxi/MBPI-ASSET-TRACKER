@@ -78,6 +78,7 @@ class AssetViewModelGetSingleSerializer(serializers.ModelSerializer):
         model = Asset
         fields = [
             "asset_id",
+            "rs_number",
             "is_found",
             "is_active",
             "tag_type",
@@ -153,6 +154,7 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
             "updated_by",
             "item_name_pii",
             "remarks",
+            "rs_number",
             "vendor",
             "warranty_expiry",
         ]
@@ -220,6 +222,7 @@ class AssetViewModelSerializer(serializers.ModelSerializer):
         instance.tag_type = validated_data.get("tag_type", instance.tag_type)
         instance.remarks = validated_data.get("remarks", instance.remarks)
         instance.vendor = validated_data.get("vendor", instance.vendor)
+        instance.rs_number = validated_data.get("rs_number", instance.rs_number)
         
         # updated by.
         instance.updated_by = self.context["request"].user
@@ -292,6 +295,7 @@ class AssetViewListModelSerializer(serializers.ModelSerializer):
             "is_active",
             "tag_type",
             "vendor",
+            "rs_number",
             "generated_by",
             "updated_by",
             "created_at",
