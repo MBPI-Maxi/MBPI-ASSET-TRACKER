@@ -62,6 +62,9 @@ export const addAssetSchema = object({
 
   is_found: boolean()
     .required(),
+
+  rs_number: string()
+    .required("RS Number is required")
 });
 
 export const updateAssetSchema = object({

@@ -5,6 +5,7 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import InputAdornment from '@mui/material/InputAdornment';
 
 import { useState, useEffect } from 'react';
 import { AddAssetSnackBar, AddAssetInstruction } from '@pages/alerts';
@@ -15,22 +16,25 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import API_ROUTES from '@/api/api';
 import formValidation from '@pages/validate';
 
+const formStructure = {
+  item_name: '',
+  department: '',
+  amount_purchased: '',
+  purchased_date: '',
+  warranty_expiry: '',
+  location: '',
+  // brand: '',
+  is_active: true,
+  is_found: true,
+  remarks: '',
+  vendor: '',
+  rs_number: ''
+}
+
 export default function AddAsset() {
   const queryClient = useQueryClient();
   const [formDisabled, setFormDisabled] = useState(false);
-  const [form, setForm] = useState({
-    item_name: '',
-    department: '',
-    amount_purchased: '',
-    purchased_date: '',
-    warranty_expiry: '',
-    location: '',
-    // brand: '',
-    is_active: true,
-    is_found: true,
-    remarks: '',
-    vendor: ''
-  });
+  const [form, setForm] = useState(formStructure);
 
   const {
     openSnackbar,
@@ -41,19 +45,7 @@ export default function AddAsset() {
   } = useFormContext();
 
   const resetForm = () => {
-    setForm({
-      item_name: '',
-      department: '',
-      amount_purchased: '',
-      purchased_date: '',
-      warranty_expiry: '',
-      // brand: '',
-      location: '',
-      is_active: true,
-      is_found: true,
-      remarks: '',
-      vendor: ''
-    });
+    setForm(formStructure);
 
     setFormDisabled(false);
   };
@@ -195,6 +187,22 @@ export default function AddAsset() {
               margin="normal"
               helperText={errors.amount_purchased || " "}
               disabled={formDisabled}
+              slotProps={{
+                input: {
+                  startAdornment: <InputAdornment position='start'>₱</InputAdornment>
+                }
+              }}
+            />
+
+            <TextField
+              fullWidth
+              name="rs_number"
+              label="RS Number"
+              value={form.rs_number}
+              onChange={handleChange}
+              margin="normal"
+              error={Boolean(errors.rs_number)}
+              helperText={errors.rs_number || " "}
             />
           </Box>
 
@@ -293,18 +301,11 @@ export default function AddAsset() {
 
       {/* Snack bar here */}
       {
-        openSnackbar && mutation.isSuccess
-          ? <AddAssetSnackBar
+        openSnackbar
+          && <AddAssetSnackBar
             openSnackbar={openSnackbar}
             hideSnackbar={hideSnackbar}
-            msg="Asset submitted successfully."
-            onCloseCallback={resetForm}
-            resetMutation={mutation.reset}
-          />
-          : <AddAssetSnackBar
-            openSnackbar={openSnackbar}
-            hideSnackbar={hideSnackbar}
-            msg="Error submitting the form"
+            msg={mutation.isSuccess ? "Asset submitted successfully." : "Error submitting the form"}
             onCloseCallback={resetForm}
             resetMutation={mutation.reset}
           />

@@ -73,6 +73,12 @@ class Asset(models.Model):
         blank=True
     )
     
+    rs_number = models.CharField(
+        null=True,
+        blank=True,
+        help_text="Reference SNP ID, e.g., rs123456",
+    )
+    
     # delay the the string reference of the user
     generated_by = models.ForeignKey(
         "application.Employee", 

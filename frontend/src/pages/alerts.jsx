@@ -42,7 +42,13 @@ export function LoginSnackBar({ openSnackbar, hideSnackbar }) {
   )
 }
 
-export function AddAssetSnackBar({ openSnackbar, hideSnackbar, msg, onCloseCallback, resetMutation }) {
+export function AddAssetSnackBar({ 
+  openSnackbar, 
+  hideSnackbar, 
+  msg, 
+  onCloseCallback, 
+  resetMutation 
+}) {
   const handleClose = () => {
     hideSnackbar();
     onCloseCallback();
